@@ -8,3 +8,6 @@ TaskManagement/package-lock.json
 productManagement/node_modules/ 
 productManagement/package.json 
 productManagement/package-lock.json
+githubTracker/node_modules/ 
+githubTracker/package.json 
+githubTracker/package-lock.json
