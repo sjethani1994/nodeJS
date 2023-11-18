@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const octokit = new Octokit({
-  auth: "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",
+  auth: "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",
 });
 
 app.use(express.static("public"));
