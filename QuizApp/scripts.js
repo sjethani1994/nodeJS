@@ -6,6 +6,25 @@ const cors = require("cors");
 // Middleware to parse incoming request bodies
 app.use(express.json());
 app.use(cors());
+
+const users = [
+  {
+    id: 1,
+    username: "student1",
+    password: "student1password",
+    role: "student",
+  },
+
+  {
+    id: 2,
+    username: "student2",
+    password: "student2password",
+    role: "student",
+  },
+
+  { id: 3, username: "admin1", password: "admin1password", role: "admin" },
+];
+
 const quizQuestions = [
   {
     id: 1,
@@ -92,6 +111,67 @@ const quizQuestions = [
     correctOption: 3,
   },
 ];
+
+// Login Endpoint
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  const user = users.find(
+    (u) => u.username === username && u.password === password
+  );
+
+  if (user) {
+    res.json({ id: user.id, username: user.username, role: user.role });
+  } else {
+    res.status(401).json({ message: "Invalid credentials" });
+  }
+});
+
+// Signup Endpoint
+app.post("/signup", (req, res) => {
+  const { username, password, role } = req.body;
+
+  const newUser = {
+    id: users.length + 1,
+    username,
+    password,
+    role,
+  };
+
+  users.push(newUser);
+
+  res.json({ id: newUser.id, username: newUser.username, role: newUser.role });
+});
+
+// Admin - Add Question Endpoint
+app.post("/admin/addQuestion", (req, res) => {
+  const { question, options, correctOption } = req.body;
+
+  const newQuestion = {
+    id: quizQuestions.length + 1,
+    question,
+    options,
+    correctOption,
+  };
+
+  quizQuestions.push(newQuestion);
+
+  res.json(newQuestion);
+});
+
+// Admin - Remove Question Endpoint
+app.delete("/admin/removeQuestion/:id", (req, res) => {
+  const questionId = parseInt(req.params.id);
+
+  const index = quizQuestions.findIndex((q) => q.id === questionId);
+
+  if (index !== -1) {
+    const removedQuestion = quizQuestions.splice(index, 1);
+    res.json(removedQuestion[0]);
+  } else {
+    res.status(404).json({ message: "Question not found" });
+  }
+});
 
 app.get("/getAllQuestions", (req, res) => {
   try {
