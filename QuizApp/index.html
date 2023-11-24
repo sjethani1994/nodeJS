@@ -53,7 +53,6 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
-
     <!-- Optional theme -->
     <link
       rel="stylesheet"
@@ -75,18 +74,22 @@
     </div>
 
     <script>
+      // Initialize variables to keep track of the current question index and store all questions
       let currentQuestionIndex = 0;
       let allQuestions = [];
 
+      // Fetch questions from the server
       function getAllQuestions() {
         fetch("http://localhost:3000/getAllQuestions")
           .then((response) => response.json())
           .then((data) => {
             allQuestions = data;
+            // Display the first question after fetching
             displayCurrentQuestion();
           });
       }
 
+      // Display the current question and options
       function displayCurrentQuestion() {
         const questionContainer = document.getElementById("question");
         const optionsContainer = document.getElementById("options");
@@ -95,6 +98,7 @@
         questionContainer.innerHTML = "";
         optionsContainer.innerHTML = "";
 
+        // Retrieve the current question object
         const currentQuestion = allQuestions[currentQuestionIndex];
 
         // Create a new question container for each question
@@ -117,12 +121,15 @@
           input.name = "answer";
           input.value = index;
           input.id = `option${index}`;
-          input.style.margin = "10px";
+          input.style.marginTop = "0.5rem";
+          input.style.marginLeft = "0rem";
+          input.setAttribute("class", "form-check-input");
+
           const label = document.createElement("label");
           label.innerText = option;
           label.setAttribute("for", `option${index}`);
-          label.setAttribute("class", "form-check-input");
-
+          label.setAttribute("class", "form-check-label");
+          label.style.marginLeft = "1.5rem";
           li.appendChild(input);
           li.appendChild(label);
           questionDiv.appendChild(li);
@@ -132,6 +139,7 @@
         questionContainer.appendChild(questionDiv);
       }
 
+      // Handle the submission of an answer
       function submitAnswer() {
         // Add logic to handle user's answer
         const selectedAnswer = document.querySelector(
@@ -139,14 +147,22 @@
         );
 
         if (selectedAnswer) {
-          console.log("Selected Answer:", selectedAnswer.value);
-          // Add logic to check the answer if needed
+          const currentQuestion = allQuestions[currentQuestionIndex];
+
+          if (
+            currentQuestion.correctOption === parseInt(selectedAnswer.value)
+          ) {
+            console.log("Correct Answer");
+          } else {
+            console.log("Wrong Answer");
+          }
 
           // Move to the next question
           currentQuestionIndex++;
 
           // Check if there are more questions
           if (currentQuestionIndex < allQuestions.length) {
+            // Display the next question
             displayCurrentQuestion();
           } else {
             console.log("Quiz completed!");
@@ -156,6 +172,7 @@
         }
       }
 
+      // Fetch and display questions when the page loads
       getAllQuestions();
     </script>
   </body>
