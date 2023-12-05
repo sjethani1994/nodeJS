@@ -11,7 +11,7 @@ app.use(express.json());
 async function connectToDB() {
   try {
     await mongoose.connect(
-      "mongodb+srv://sjethani651:Sjethani%4094@hatch.zcgjpl5.mongodb.net/11",
+      "mongodb+srv://sjethani651:Sjethani%4094@hatch.zcgjpl5.mongodb.net/",
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -106,10 +106,7 @@ const productDetailsSchema = new Schema(
     },
   },
   {
-    timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-    },
+    timestamps: true,
   }
 );
 
@@ -135,7 +132,6 @@ const commentSchema = new Schema({
   },
 });
 
-// Comments model
 const commentModel = mongoose.model("flipkartComments", commentSchema);
 
 /**
@@ -454,20 +450,60 @@ app.post("/comment/create", async (req, res) => {
   }
 });
 
+// API endpoint to get all comments with user and product details
 app.get("/comment/read", async (req, res) => {
   try {
+    // Retrieve all comments from the database and populate the associated user and product information
     const allComments = await commentModel
       .find()
       .populate("userId")
       .populate("productId");
+    // Respond with the populated comments
     res.status(200).json({
-      message: "all documents",
+      message: "All comments with user and product details",
       allComments,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(404).json({
-      message: error.message,
+    // Handle errors during the retrieval process
+    console.error(error);
+
+    // Respond with an error status and message
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+});
+
+app.post("/comment/updateComment/:id", async (req, res) => {
+  try {
+    // Extract comment ID from request parameters and comment details from request body
+    const { id } = req.params;
+    const { commentMsg, productId, userId } = req.body;
+
+    // Update the comment and get the updated document
+    const updatedComment = await commentModel.findByIdAndUpdate(
+      id,
+      { commentMsg, productId, userId },
+      { new: true }
+    );
+
+    // Check if the comment was found and updated
+    if (!updatedComment) {
+      return res.status(404).json({
+        message: "Comment not found or could not be updated",
+      });
+    }
+
+    // Respond with the updated comment
+    res.status(200).json({
+      message: "Comment updated successfully",
+      updatedComment,
+    });
+  } catch (error) {
+    console.error("Error during comment update:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
     });
   }
 });
