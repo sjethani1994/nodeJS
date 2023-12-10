@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 const Port = 5000;
-
+const errorHandler = require("./utils/errorHandler");
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -34,6 +34,13 @@ const commentsRoute = require("./routes/comments.routes");
 app.use("/user", UserRoute);
 app.use("/product", productRoute);
 app.use("/comment", commentsRoute);
+
+app.use("*", (req, res, next) => {
+  const error = new Error("The route does not exists.");
+  next(error);
+});
+
+app.use(errorHandler);
 
 // Start the server and listen on the specified port
 app.listen(Port, () => {
