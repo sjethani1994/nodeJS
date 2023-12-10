@@ -1,10 +1,13 @@
-const UserModel = require("../models/userSchema.model");
+const UserModel = require('../models/userSchema.model');
+const bcryptPassword = require('../utils/bcryptPassword');
+const bcrypt = require('bcryptjs');
 
 // Function to register a new user
 const RegisterUser = async (req, res) => {
   try {
     // Extracting user information from the request body
     const { email, password, username } = req.body;
+    const hashedPassword = await bcryptPassword(password);
 
     // Check if the email already exists in the database
     const existingUser = await UserModel.findOne({ email: email });
@@ -17,7 +20,7 @@ const RegisterUser = async (req, res) => {
     // Create the new user
     const insertedData = await UserModel.create({
       email,
-      password,
+      password: hashedPassword,
       username,
     });
 
@@ -54,6 +57,13 @@ const LoginUser = async (req, res) => {
       message: `User with this ${email} is not found.`,
     });
   }
+
+  const ismatchedPassword = await bcrypt.compare(password, user.password);
+    if (ismatchedPassword) {
+      return  res.json({
+            message: `User is loggedin`
+        })
+    }
 
   // Check if the provided password matches the stored password
   if (user.password === password) {
