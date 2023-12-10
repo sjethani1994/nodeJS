@@ -1,7 +1,7 @@
 const UserModel = require('../models/userSchema.model');
 const bcryptPassword = require('../utils/bcryptPassword');
 const bcrypt = require('bcryptjs');
-
+const jwt = require("jsonwebtoken"); // Import the jsonwebtoken library
 // Function to register a new user
 const RegisterUser = async (req, res) => {
   try {
@@ -60,8 +60,12 @@ const LoginUser = async (req, res) => {
 
   const ismatchedPassword = await bcrypt.compare(password, user.password);
     if (ismatchedPassword) {
+      const token = jwt.sign({
+        data: user
+      }, process.env.JWT_SECRETKEY, { expiresIn: 60 * 60 });
       return  res.json({
-            message: `User is loggedin`
+            message: `User is loggedin`,
+            token
         })
     }
 

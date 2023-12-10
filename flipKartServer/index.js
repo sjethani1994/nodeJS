@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 const Port = 5000;
 const errorHandler = require("./utils/errorHandler");
+require("dotenv").config();
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -13,9 +14,7 @@ app.use(cors());
 // Function to connect to MongoDB database
 const connectDb = async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://sjethani651:Sjethani%4094@hatch.zcgjpl5.mongodb.net/userDetails"
-    );
+    await mongoose.connect(process.env.Mongo_Url);
     console.log("Connected to the database");
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
