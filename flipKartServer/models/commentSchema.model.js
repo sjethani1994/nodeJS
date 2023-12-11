@@ -14,7 +14,7 @@ const commentSchema =new Schema({
     },
     productId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'FlipkarProducts',
+        ref:'FlipkartProducts',
         required:true
     }
 })
