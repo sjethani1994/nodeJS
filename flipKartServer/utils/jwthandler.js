@@ -3,7 +3,6 @@ async function jwtHandler(req,res,next){
     //headers
     //we recieve token from client in req.header authroization section;
     const token = req.header('Authorization');
-    console.log(token,"token here");
 
     if(!token){
         return res.status(401).json({
@@ -12,7 +11,7 @@ async function jwtHandler(req,res,next){
     }
 
     try {
-        const decoded = jwt.verify(token,process.env.JWT_SECRETKEY);
+        const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
         console.log(decoded.data,"from jwt handler");
         req.userId =decoded.data;
         next();

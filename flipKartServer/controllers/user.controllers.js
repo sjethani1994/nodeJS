@@ -64,7 +64,7 @@ const LoginUser = async (req, res) => {
       {
         data: user._id,
       },
-      process.env.JWT_SECRETKEY,
+      process.env.JWT_SECRET_KEY,
       { expiresIn: "1h" }
     );
     return res.json({
