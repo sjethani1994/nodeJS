@@ -8,8 +8,8 @@ const jwtHandler = require("../utils/jwthandler");
 const quizRoute = express.Router();
 
 // Route for fetching questions
-quizRoute.get("/getQuestions", getAllQuestions);
-quizRoute.post("/addQuestion", addQuestion);
+quizRoute.get("/getQuestions", jwtHandler, getAllQuestions);
+quizRoute.post("/addQuestion", jwtHandler, addQuestion);
 
 // Export the UserRoute for use in the main app
 module.exports = quizRoute;
