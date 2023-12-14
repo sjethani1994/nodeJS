@@ -78,14 +78,27 @@
       let currentQuestionIndex = 0;
       let allQuestions = [];
 
+      // Authorization token
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNTQwMzk0LCJleHAiOjE3MDI1NDM5OTR9.jODVHs6r1h3RqpZNAsZZXjQ6_R1WuiiQwCD-lJGWxrE";
+
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        Authorization: token,
+      });
+
       // Fetch questions from the server
       function getAllQuestions() {
-        fetch("http://localhost:3000/getAllQuestions")
+        fetch("http://localhost:5000/quiz/getQuestions", { headers: headers })
           .then((response) => response.json())
           .then((data) => {
-            allQuestions = data;
+            // Store all questions
+            allQuestions = data.quizQuestions;
             // Display the first question after fetching
             displayCurrentQuestion();
+          })
+          .catch((error) => {
+            console.error("Error fetching questions:", error);
           });
       }
 
@@ -107,7 +120,7 @@
 
         // Display current question
         const questionText = document.createElement("p");
-        questionText.innerText = currentQuestion.question;
+        questionText.innerText = currentQuestion.questionText;
         questionDiv.appendChild(questionText);
 
         // Display options with radio buttons
@@ -126,7 +139,7 @@
           input.setAttribute("class", "form-check-input");
 
           const label = document.createElement("label");
-          label.innerText = option;
+          label.innerText = option.optionText;
           label.setAttribute("for", `option${index}`);
           label.setAttribute("class", "form-check-label");
           label.style.marginLeft = "1.5rem";

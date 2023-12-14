@@ -3,7 +3,7 @@ async function jwtHandler(req,res,next){
     //headers
     //we recieve token from client in req.header authroization section;
     const token = req.header('Authorization');
-
+11
     if(!token){
         return res.status(401).json({
             message:"Unauthorized:no token provided"
@@ -11,8 +11,7 @@ async function jwtHandler(req,res,next){
     }
 
     try {
-        const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-        console.log(decoded.data,"from jwt handler");
+        const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);1
         req.userId =decoded.data;
         next();
     } catch (error) {
