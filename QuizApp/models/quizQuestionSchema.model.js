@@ -15,20 +15,20 @@ const quizQuestionsSchema = new Schema({
         unique: true,
         trim: true, // Remove leading and trailing whitespaces
       },
-      correctOption: {
-        type: String,
-        default: "", // You can set a default value if needed
-      },
-      isCorrect: {
-        type: Boolean,
-        default: false, // You can set a default value if needed
-      },
-      score: {
-        type: Number,
-        default: 0, // You can set a default value if needed
-      },
     },
   ],
+  correctOption: {
+    type: String,
+    default: "", // You can set a default value if needed
+  },
+  isCorrect: {
+    type: Boolean,
+    default: false, // You can set a default value if needed
+  },
+  score: {
+    type: Number,
+    default: 0, // You can set a default value if needed
+  },
 });
 
 // Create a mongoose model based on the schema
