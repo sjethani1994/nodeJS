@@ -98,8 +98,45 @@ const LoginUser = async (req, res) => {
   }
 };
 
+const reloadQuiz = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    // Find the user by ID
+    const user = await UserModel.findOne({ _id: userId });
+
+    // Check if the user with the given ID exists
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Reset the user's score to 0
+    user.score = 0;
+
+    // Save the updated user score
+    await user.save();
+
+    // Return success message and updated user information
+    res.status(200).json({
+      message: "Quiz reloaded successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error reloading quiz:", error);
+
+    // Return a more informative error message
+    res.status(500).json({
+      message: "Error reloading quiz. Please try again later.",
+      error: error.message,
+    });
+  }
+};
+
 // Exporting functions for use in the routes
 module.exports = {
   LoginUser,
   RegisterUser,
+  reloadQuiz,
 };

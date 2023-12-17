@@ -4,7 +4,7 @@ let allQuestions = [];
 
 // Authorization token
 const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNzkxMjk5LCJleHAiOjE3MDI3OTQ4OTl9.4g81Hi0FtscZlkYTgrQ4UyX0RzvN7Oy8D2hOaE245kQ";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNzk1NDA5LCJleHAiOjE3MDI3OTkwMDl9.-pt0L4Vp8qLrBCQcqpWXUTAIxeUDXbqENQYTGhs6How";
 
 const headers = new Headers({
   "Content-Type": "application/json",
@@ -128,6 +128,30 @@ async function submitAnswer() {
     console.log("Please select an answer.");
   }
 }
+
+async function reloadQuiz() {
+  if (currentQuestionIndex >= allQuestions.length) {
+    try {
+      const response = await fetch("http://localhost:5000/user/reloadQuiz", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          userId: userId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error sending data to the server:", error);
+    }
+  }
+}
+
 
 // Fetch and display questions when the page loads
 getAllQuestions();

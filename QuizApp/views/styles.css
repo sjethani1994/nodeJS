@@ -38,9 +38,7 @@ body {
 .submit-btn {
   margin-top: 10px; /* Add margin at the top */
   padding: 8px 16px; /* Set padding */
-  background-color: #007bff; /* Set background color */
-  color: #fff; /* Set text color */
-  border: none; /* Remove border */
+ 
   border-radius: 4px; /* Add rounded corners */
   cursor: pointer; /* Set cursor to pointer on hover */
 }
