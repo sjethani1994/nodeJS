@@ -123,6 +123,7 @@ async function submitAnswer() {
       displayCurrentQuestion();
     } else {
       console.log("Quiz completed!");
+      updateReloadButtonVisibility();
     }
   } else {
     console.log("Please select an answer.");
@@ -152,6 +153,11 @@ async function reloadQuiz() {
   }
 }
 
+// Function to update the visibility of the Reload Quiz button
+function updateReloadButtonVisibility() {
+  const reloadButton = document.getElementById("reloadQuizBtn");
+  reloadButton.style.display = "inline"; // Show the button
+}
 
 // Fetch and display questions when the page loads
 getAllQuestions();
