@@ -3,9 +3,11 @@ const bcryptPassword = require("../utils/bcryptPassword");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const quizModel = require("../models/quizQuestionSchema.model");
+
+// Function to register a new user
 const RegisterUser = async (req, res) => {
   try {
-    // Extracting user information from the request body
+    // Extract user information from the request body
     const { email, password, username } = req.body;
     const hashedPassword = await bcryptPassword(password);
 
@@ -39,58 +41,6 @@ const RegisterUser = async (req, res) => {
 };
 
 // Function to authenticate and login a user
-// const LoginUser = async (req, res) => {
-//   const { email, password } = req.body;
-
-//   // Check if required credentials are provided
-//   if (!email || !password) {
-//     return res.json({
-//       message: "Please enter both email and password.",
-//     });
-//   }
-
-//   // Check if the user with the provided email exists
-//   const user = await UserModel.findOne({ email: email });
-
-//   if (!user) {
-//     return res.json({
-//       message: `User with this ${email} is not found.`,
-//     });
-//   }
-
-//   const ismatchedPassword = await bcrypt.compare(password, user.password);
-//   if (ismatchedPassword) {
-//     const token = jwt.sign(
-//       {
-//         data: user._id,
-//       },
-//       process.env.JWT_SECRET_KEY,
-//       { expiresIn: "1h" }
-//     );
-//     // Create the new user
-//     // Optionally, update specific quiz questions associated with the user
-//     const updatedQuizQuestions = await quizModel.updateMany(
-//       { $set: { userId: user._id } }
-//     );
-//     return res.json({
-//       message: `User is loggedin`,
-//       token,
-//     });
-//   }
-
-//   // Check if the provided password matches the stored password
-//   if (user.password === password) {
-//     return res.json({
-//       message: `User with ${email} has been logged in.`,
-//     });
-//   }
-
-//   // Return a message for incorrect password
-//   res.json({
-//     message: `User is not able to login due to wrong password.`,
-//   });
-// };
-
 const LoginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -111,6 +61,7 @@ const LoginUser = async (req, res) => {
       });
     }
 
+    // Check if the provided password matches the stored password
     const isMatchedPassword = await bcrypt.compare(password, user.password);
     if (isMatchedPassword) {
       const token = jwt.sign(

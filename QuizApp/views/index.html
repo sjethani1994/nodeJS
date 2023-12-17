@@ -80,7 +80,7 @@
 
       // Authorization token
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3ZGIzNjI3NzI2ZWU1YzY2ZDYwMzUzIiwiaWF0IjoxNzAyNzM3NDgzLCJleHAiOjE3MDI3NDEwODN9.PaMGBahe9Pqn6Eat9KeEf9iaZJSzFB4eEl8K3EkdpdI";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNzkxMjk5LCJleHAiOjE3MDI3OTQ4OTl9.4g81Hi0FtscZlkYTgrQ4UyX0RzvN7Oy8D2hOaE245kQ";
 
       const headers = new Headers({
         "Content-Type": "application/json",
@@ -184,8 +184,6 @@
             }
 
             const data = await response.json();
-            // Handle the response from the server
-            console.log("Response from server:", data);
           } catch (error) {
             console.error("Error sending data to the server:", error);
           }

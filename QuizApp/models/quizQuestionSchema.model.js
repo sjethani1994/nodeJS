@@ -8,6 +8,7 @@ const quizQuestionsSchema = new Schema({
     required: true,
   },
   options: [
+    // Modify the options schema for better consistency
     {
       optionText: {
         type: String,

@@ -1,5 +1,5 @@
+// Import necessary models
 const quizModel = require("../models/quizQuestionSchema.model");
-const UserModel = require("../models/userSchema.model");
 
 // Retrieve all questions from the database
 const getAllQuestions = async (req, res) => {
@@ -7,6 +7,7 @@ const getAllQuestions = async (req, res) => {
     // Fetch all questions from the database
     const quizQuestions = await quizModel.find();
 
+    // Get the user ID from the request
     const userId = req.userId;
 
     // Return success message and retrieved questions
@@ -47,7 +48,7 @@ const addQuestion = async (req, res) => {
     }
 
     // Create a new question in the database
-    const insertedData = await quizModel.create({
+    const insertedQuestion = await quizModel.create({
       questionText,
       options,
       correctOption,
@@ -58,7 +59,7 @@ const addQuestion = async (req, res) => {
     // Return success message and inserted question
     res.status(201).json({
       message: "Question added successfully",
-      insertedData,
+      insertedQuestion,
     });
   } catch (error) {
     console.error("Error adding question:", error);
@@ -71,60 +72,18 @@ const addQuestion = async (req, res) => {
   }
 };
 
-// const submitAnswer = async (req, res) => {
-//   try {
-//     const { correctOption, id, userId } = req.body;
-
-//     // Use await to wait for the result of findById
-//     const quizQuestion = await quizModel.findOne({ _id: id, userId: userId });
-
-//     // Check if the question with the given ID and userId exists
-//     if (!quizQuestion) {
-//       return res.status(404).json({
-//         message: "Question not found for the specified user",
-//       });
-//     }
-
-//     // Check if the provided answer is correct
-//     let isCorrect = false;
-//     if (correctOption === quizQuestion.correctOption) {
-//       isCorrect = true;
-
-//       // Increase the score by 1
-//       quizQuestion.score += 1;
-
-//       // Save the updated question with the increased score
-//       await quizQuestion.save();
-//     }
-
-//     // Return success message, retrieved question, and correctness status
-//     res.status(200).json({
-//       message: "Answer submitted successfully",
-//       isCorrect: isCorrect,
-//       quizQuestion: quizQuestion,
-//     });
-//   } catch (error) {
-//     console.error("Error submitting answer:", error);
-
-//     // Return error message
-//     res.status(500).json({
-//       message: "Internal server error",
-//       error: error.message,
-//     });
-//   }
-// };
-
+// Submit an answer to a question
 const submitAnswer = async (req, res) => {
   try {
     const { correctOption, id } = req.body;
 
     // Use await to wait for the result of findById
-    const quizQuestion = await quizModel.findOne({ _id: id});
+    const quizQuestion = await quizModel.findOne({ _id: id });
 
-    // Check if the question with the given ID and userId exists
+    // Check if the question with the given ID exists
     if (!quizQuestion) {
       return res.status(404).json({
-        message: "Question not found for the specified user",
+        message: "Question not found",
       });
     }
 
@@ -133,10 +92,12 @@ const submitAnswer = async (req, res) => {
     if (correctOption === quizQuestion.correctOption) {
       isCorrect = true;
 
-      console.log(req);
+      // Increase the user's score by 1
       req.user.score += isCorrect ? 1 : 0;
 
+      // Save the updated user score
       await req.user.save();
+
       // Save the updated question with the increased score
       await quizQuestion.save();
     }
@@ -144,8 +105,8 @@ const submitAnswer = async (req, res) => {
     // Return success message, retrieved question, and correctness status
     res.status(200).json({
       message: "Answer submitted successfully",
-      isCorrect: isCorrect,
-      quizQuestion: quizQuestion,
+      isCorrect,
+      quizQuestion,
     });
   } catch (error) {
     console.error("Error submitting answer:", error);
