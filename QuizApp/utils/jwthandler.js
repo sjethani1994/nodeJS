@@ -1,4 +1,5 @@
-const jwt =require('jsonwebtoken')
+const jwt =require('jsonwebtoken');
+const UserModel = require('../models/userSchema.model');
 async function jwtHandler(req,res,next){
     //headers
     //we recieve token from client in req.header authroization section;
@@ -11,8 +12,10 @@ async function jwtHandler(req,res,next){
     }
 
     try {
-        const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);1
-        req.userId =decoded.data;
+        const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
+        req.userId = decoded.data;
+        const user = await UserModel.findById(req.userId);
+        req.user = user;
         next();
     } catch (error) {
         console.log(error.message);

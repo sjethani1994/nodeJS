@@ -80,13 +80,14 @@
 
       // Authorization token
       const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNTQwMzk0LCJleHAiOjE3MDI1NDM5OTR9.jODVHs6r1h3RqpZNAsZZXjQ6_R1WuiiQwCD-lJGWxrE";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3ZGIzNjI3NzI2ZWU1YzY2ZDYwMzUzIiwiaWF0IjoxNzAyNzM3NDgzLCJleHAiOjE3MDI3NDEwODN9.PaMGBahe9Pqn6Eat9KeEf9iaZJSzFB4eEl8K3EkdpdI";
 
       const headers = new Headers({
         "Content-Type": "application/json",
         Authorization: token,
       });
 
+      let userId;
       // Fetch questions from the server
       function getAllQuestions() {
         fetch("http://localhost:5000/quiz/getQuestions", { headers: headers })
@@ -94,6 +95,7 @@
           .then((data) => {
             // Store all questions
             allQuestions = data.quizQuestions;
+            userId = data.userId;
             // Display the first question after fetching
             displayCurrentQuestion();
           })
@@ -132,7 +134,7 @@
           const input = document.createElement("input");
           input.type = "radio";
           input.name = "answer";
-          input.value = index;
+          input.value = option.optionText;
           input.id = `option${index}`;
           input.style.marginTop = "0.5rem";
           input.style.marginLeft = "0rem";
@@ -153,7 +155,7 @@
       }
 
       // Handle the submission of an answer
-      function submitAnswer() {
+      async function submitAnswer() {
         // Add logic to handle user's answer
         const selectedAnswer = document.querySelector(
           'input[name="answer"]:checked'
@@ -161,10 +163,34 @@
 
         if (selectedAnswer) {
           const currentQuestion = allQuestions[currentQuestionIndex];
+          const answerData = {
+            correctOption: selectedAnswer.value,
+            id: currentQuestion._id,
+            userId: userId,
+          };
 
-          if (
-            currentQuestion.correctOption === parseInt(selectedAnswer.value)
-          ) {
+          try {
+            const response = await fetch(
+              "http://localhost:5000/quiz/submitAnswer",
+              {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(answerData),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            // Handle the response from the server
+            console.log("Response from server:", data);
+          } catch (error) {
+            console.error("Error sending data to the server:", error);
+          }
+
+          if (currentQuestion.correctOption === selectedAnswer.value) {
             console.log("Correct Answer");
           } else {
             console.log("Wrong Answer");

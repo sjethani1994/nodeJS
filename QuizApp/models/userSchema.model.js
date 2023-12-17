@@ -29,6 +29,10 @@ const UserdetailSchema = new Schema({
       message: "Password should be greater than 7 characters",
     },
   },
+  score: {
+    type: Number,
+    default: 0, // You can set a default value if needed
+  },
 });
 
 // Create a mongoose model based on the schema

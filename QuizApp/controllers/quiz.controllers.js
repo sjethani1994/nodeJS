@@ -1,7 +1,5 @@
 const quizModel = require("../models/quizQuestionSchema.model");
-const bcryptPassword = require("../utils/bcryptPassword");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const UserModel = require("../models/userSchema.model");
 
 // Retrieve all questions from the database
 const getAllQuestions = async (req, res) => {
@@ -9,10 +7,13 @@ const getAllQuestions = async (req, res) => {
     // Fetch all questions from the database
     const quizQuestions = await quizModel.find();
 
+    const userId = req.userId;
+
     // Return success message and retrieved questions
     res.status(200).json({
       message: "Questions retrieved successfully",
       quizQuestions,
+      userId,
     });
   } catch (error) {
     console.error("Error fetching questions:", error);
@@ -70,8 +71,96 @@ const addQuestion = async (req, res) => {
   }
 };
 
+// const submitAnswer = async (req, res) => {
+//   try {
+//     const { correctOption, id, userId } = req.body;
+
+//     // Use await to wait for the result of findById
+//     const quizQuestion = await quizModel.findOne({ _id: id, userId: userId });
+
+//     // Check if the question with the given ID and userId exists
+//     if (!quizQuestion) {
+//       return res.status(404).json({
+//         message: "Question not found for the specified user",
+//       });
+//     }
+
+//     // Check if the provided answer is correct
+//     let isCorrect = false;
+//     if (correctOption === quizQuestion.correctOption) {
+//       isCorrect = true;
+
+//       // Increase the score by 1
+//       quizQuestion.score += 1;
+
+//       // Save the updated question with the increased score
+//       await quizQuestion.save();
+//     }
+
+//     // Return success message, retrieved question, and correctness status
+//     res.status(200).json({
+//       message: "Answer submitted successfully",
+//       isCorrect: isCorrect,
+//       quizQuestion: quizQuestion,
+//     });
+//   } catch (error) {
+//     console.error("Error submitting answer:", error);
+
+//     // Return error message
+//     res.status(500).json({
+//       message: "Internal server error",
+//       error: error.message,
+//     });
+//   }
+// };
+
+const submitAnswer = async (req, res) => {
+  try {
+    const { correctOption, id } = req.body;
+
+    // Use await to wait for the result of findById
+    const quizQuestion = await quizModel.findOne({ _id: id});
+
+    // Check if the question with the given ID and userId exists
+    if (!quizQuestion) {
+      return res.status(404).json({
+        message: "Question not found for the specified user",
+      });
+    }
+
+    // Check if the provided answer is correct
+    let isCorrect = false;
+    if (correctOption === quizQuestion.correctOption) {
+      isCorrect = true;
+
+      console.log(req);
+      req.user.score += isCorrect ? 1 : 0;
+
+      await req.user.save();
+      // Save the updated question with the increased score
+      await quizQuestion.save();
+    }
+
+    // Return success message, retrieved question, and correctness status
+    res.status(200).json({
+      message: "Answer submitted successfully",
+      isCorrect: isCorrect,
+      quizQuestion: quizQuestion,
+    });
+  } catch (error) {
+    console.error("Error submitting answer:", error);
+
+    // Return error message
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 // Export functions for use in the routes
 module.exports = {
   getAllQuestions,
   addQuestion,
+  submitAnswer,
 };

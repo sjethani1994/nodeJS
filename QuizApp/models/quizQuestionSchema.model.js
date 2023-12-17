@@ -25,10 +25,6 @@ const quizQuestionsSchema = new Schema({
     type: Boolean,
     default: false, // You can set a default value if needed
   },
-  score: {
-    type: Number,
-    default: 0, // You can set a default value if needed
-  },
 });
 
 // Create a mongoose model based on the schema
