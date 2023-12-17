@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Page</title>
+  </head>
+  <body>
+    <!-- Header with the page title -->
+    <h3>Dashboard Page</h3>
+
+    <!-- Button to trigger Google Logout -->
+    <button onclick="googleLogout()">Google Logout</button>
+
+    <!-- JavaScript script to handle Google Logout -->
+    <script>
+      // Function to handle Google Logout
+      function googleLogout() {
+        // Open the "/auth/logout" URL in the same window/tab
+        window.open("/auth/logout", "_self");
+      }
+    </script>
+  </body>
+</html>

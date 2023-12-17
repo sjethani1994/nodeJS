@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <h3>Hi this is client from the server</h3>
+    <h4>Login form</h4>
+    <input title="username" type="text" id="username" />
+    <input title="password" type="text" id="password" />
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+
+    <button onclick="getinfo()">Clickme</button>
+
+    <script>
+      async function getinfo() {
+        try {
+          const response = await fetch("/info");
+          const data = await response.json();
+          console.log(data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function login() {
+        const username = document.querySelector("#username").value;
+        const passsword = document.querySelector("#password").value;
+
+        const dataObj = {
+          username: username,
+          passsword: passsword,
+        };
+
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: JSON.stringify(dataObj),
+        });
+
+        const responseData = await response.json();
+        console.log(responseData, "response from server");
+      }
+
+      async function logout() {
+        const response = await fetch("/logout");
+        const data = await response.json();
+        console.log(data, "logout data");
+      }
+    </script>
+  </body>
+</html>

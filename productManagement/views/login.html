@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Document metadata -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Login Example</title>
+  </head>
+  <body>
+    <!-- Button to trigger Google Login -->
+    <button onclick="googleLogin()">Google Login</button>
+
+    <!-- JavaScript script to handle Google Login -->
+    <script>
+      // Function to handle Google Login
+      function googleLogin() {
+        // Open the "/auth/google" URL in the same window/tab
+        window.open("/auth/google", "_self");
+      }
+    </script>
+  </body>
+</html>
