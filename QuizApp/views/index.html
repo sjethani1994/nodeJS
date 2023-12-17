@@ -1,51 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Title of the webpage -->
     <title>Quiz App</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      .quiz-container {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-      }
-
-      .question {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      .options {
-        list-style-type: none;
-        padding: 0;
-      }
-
-      .option {
-        margin: 5px 0;
-      }
-
-      .submit-btn {
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-    </style>
+    <!-- Bootstrap CSS -->
     <!-- Latest compiled and minified CSS -->
     <link
       rel="stylesheet"
@@ -53,18 +16,29 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
-    <!-- Optional theme -->
+
+    <!-- Optional Bootstrap theme -->
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap-theme.min.css"
       integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
       crossorigin="anonymous"
     />
+
+    <!-- Link your custom CSS file here -->
+    <link rel="stylesheet" href="./styles.css" />
   </head>
+
   <body>
+    <!-- Quiz container -->
     <div class="quiz-container">
+      <!-- Display the question -->
       <div class="question" id="question"></div>
+
+      <!-- Display the options as an unordered list -->
       <ul class="options" id="options"></ul>
+
+      <!-- Submit button -->
       <button
         class="submit-btn btn btn-outline-primary"
         onclick="submitAnswer()"
@@ -73,144 +47,7 @@
       </button>
     </div>
 
-    <script>
-      // Initialize variables to keep track of the current question index and store all questions
-      let currentQuestionIndex = 0;
-      let allQuestions = [];
-
-      // Authorization token
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNzkxMjk5LCJleHAiOjE3MDI3OTQ4OTl9.4g81Hi0FtscZlkYTgrQ4UyX0RzvN7Oy8D2hOaE245kQ";
-
-      const headers = new Headers({
-        "Content-Type": "application/json",
-        Authorization: token,
-      });
-
-      let userId;
-      // Fetch questions from the server
-      function getAllQuestions() {
-        fetch("http://localhost:5000/quiz/getQuestions", { headers: headers })
-          .then((response) => response.json())
-          .then((data) => {
-            // Store all questions
-            allQuestions = data.quizQuestions;
-            userId = data.userId;
-            // Display the first question after fetching
-            displayCurrentQuestion();
-          })
-          .catch((error) => {
-            console.error("Error fetching questions:", error);
-          });
-      }
-
-      // Display the current question and options
-      function displayCurrentQuestion() {
-        const questionContainer = document.getElementById("question");
-        const optionsContainer = document.getElementById("options");
-
-        // Clear previous content
-        questionContainer.innerHTML = "";
-        optionsContainer.innerHTML = "";
-
-        // Retrieve the current question object
-        const currentQuestion = allQuestions[currentQuestionIndex];
-
-        // Create a new question container for each question
-        const questionDiv = document.createElement("div");
-        questionDiv.className = "question";
-
-        // Display current question
-        const questionText = document.createElement("p");
-        questionText.innerText = currentQuestion.questionText;
-        questionDiv.appendChild(questionText);
-
-        // Display options with radio buttons
-        currentQuestion.options.forEach((option, index) => {
-          const li = document.createElement("li");
-          li.className = "option";
-          li.style.listStyleType = "none";
-
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = "answer";
-          input.value = option.optionText;
-          input.id = `option${index}`;
-          input.style.marginTop = "0.5rem";
-          input.style.marginLeft = "0rem";
-          input.setAttribute("class", "form-check-input");
-
-          const label = document.createElement("label");
-          label.innerText = option.optionText;
-          label.setAttribute("for", `option${index}`);
-          label.setAttribute("class", "form-check-label");
-          label.style.marginLeft = "1.5rem";
-          li.appendChild(input);
-          li.appendChild(label);
-          questionDiv.appendChild(li);
-        });
-
-        // Append the entire question container to the main container
-        questionContainer.appendChild(questionDiv);
-      }
-
-      // Handle the submission of an answer
-      async function submitAnswer() {
-        // Add logic to handle user's answer
-        const selectedAnswer = document.querySelector(
-          'input[name="answer"]:checked'
-        );
-
-        if (selectedAnswer) {
-          const currentQuestion = allQuestions[currentQuestionIndex];
-          const answerData = {
-            correctOption: selectedAnswer.value,
-            id: currentQuestion._id,
-            userId: userId,
-          };
-
-          try {
-            const response = await fetch(
-              "http://localhost:5000/quiz/submitAnswer",
-              {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify(answerData),
-              }
-            );
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-          } catch (error) {
-            console.error("Error sending data to the server:", error);
-          }
-
-          if (currentQuestion.correctOption === selectedAnswer.value) {
-            console.log("Correct Answer");
-          } else {
-            console.log("Wrong Answer");
-          }
-
-          // Move to the next question
-          currentQuestionIndex++;
-
-          // Check if there are more questions
-          if (currentQuestionIndex < allQuestions.length) {
-            // Display the next question
-            displayCurrentQuestion();
-          } else {
-            console.log("Quiz completed!");
-          }
-        } else {
-          console.log("Please select an answer.");
-        }
-      }
-
-      // Fetch and display questions when the page loads
-      getAllQuestions();
-    </script>
+    <!-- Link your custom JavaScript file here -->
+    <script src="./script.js"></script>
   </body>
 </html>

@@ -1,0 +1,46 @@
+/* Reset default styles and set a base font-family */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Styles for the quiz container */
+.quiz-container {
+  max-width: 600px; /* Set maximum width */
+  margin: 20px auto; /* Center the container and provide spacing */
+  padding: 20px; /* Add padding inside the container */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 8px; /* Add rounded corners */
+  background-color: #f9f9f9; /* Set background color */
+}
+
+/* Styles for the question text */
+.question {
+  font-size: 18px; /* Set font size */
+  font-weight: bold; /* Set font weight to bold */
+  margin-bottom: 10px; /* Add margin at the bottom */
+}
+
+/* Styles for the options list */
+.options {
+  list-style-type: none; /* Remove list-style */
+  padding: 0; /* Remove default padding */
+}
+
+/* Styles for individual options */
+.option {
+  margin: 5px 0; /* Add margin to separate options */
+}
+
+/* Styles for the submit button */
+.submit-btn {
+  margin-top: 10px; /* Add margin at the top */
+  padding: 8px 16px; /* Set padding */
+  background-color: #007bff; /* Set background color */
+  color: #fff; /* Set text color */
+  border: none; /* Remove border */
+  border-radius: 4px; /* Add rounded corners */
+  cursor: pointer; /* Set cursor to pointer on hover */
+}
