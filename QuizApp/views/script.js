@@ -3,8 +3,7 @@ let currentQuestionIndex = 0;
 let allQuestions = [];
 
 // Authorization token
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjU3YWI0NTdlMGUzODJiMTE4YzBiOGJlIiwiaWF0IjoxNzAyNzk1NDA5LCJleHAiOjE3MDI3OTkwMDl9.-pt0L4Vp8qLrBCQcqpWXUTAIxeUDXbqENQYTGhs6How";
+const token = sessionStorage.getItem("token");
 
 const headers = new Headers({
   "Content-Type": "application/json",
@@ -25,6 +24,7 @@ function getAllQuestions() {
       displayCurrentQuestion();
     })
     .catch((error) => {
+      window.location.href = "login.html";
       console.error("Error fetching questions:", error);
     });
 }
@@ -159,5 +159,27 @@ function updateReloadButtonVisibility() {
   reloadButton.style.display = "inline"; // Show the button
 }
 
+async function logout() {
+  if (currentQuestionIndex >= allQuestions.length) {
+    try {
+      const response = await fetch("http://localhost:5000/user/logout", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          userId: userId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error sending data to the server:", error);
+    }
+  }
+}
 // Fetch and display questions when the page loads
 getAllQuestions();

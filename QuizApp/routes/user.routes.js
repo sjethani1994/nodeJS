@@ -3,6 +3,7 @@ const {
   RegisterUser,
   LoginUser,
   reloadQuiz,
+  LogoutUser
 } = require("../controllers/user.controllers");
 const jwtHandler = require("../utils/jwthandler");
 // Creating a custom route using express.Router()
@@ -16,6 +17,9 @@ UserRoute.post("/login", LoginUser);
 
 // Route for reloading quiz
 UserRoute.post("/reloadQuiz", reloadQuiz);
+
+// Route for reloading quiz
+UserRoute.post("/logout", jwtHandler, LogoutUser);
 
 // Export the UserRoute for use in the main app
 module.exports = UserRoute;

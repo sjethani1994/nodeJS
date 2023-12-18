@@ -63,36 +63,85 @@ const LoginUser = async (req, res) => {
 
     // Check if the provided password matches the stored password
     const isMatchedPassword = await bcrypt.compare(password, user.password);
-    if (isMatchedPassword) {
-      const token = jwt.sign(
-        {
-          data: user._id,
-        },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: "1h" }
-      );
 
-      // Optionally, associate quiz questions with the user upon login
-      const updatedQuizQuestions = await quizModel.updateMany(
-        { userId: null }, // Specify the condition to update records (e.g., where userId is null)
-        { $set: { userId: user._id } }
-      );
-
+    if (!isMatchedPassword) {
       return res.json({
-        message: `User is logged in`,
-        token,
-        updatedQuizQuestions,
+        message: `User is not able to login due to wrong password.`,
       });
     }
 
-    // Return a message for incorrect password
-    res.json({
-      message: `User is not able to login due to wrong password.`,
+    // Set the user ID in the session
+    req.session.user = user._id;  // Ensure this line is present
+
+    const token = jwt.sign(
+      {
+        data: user._id,
+      },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    // Optionally, associate quiz questions with the user upon login
+    const updatedQuizQuestions = await quizModel.updateMany(
+      { userId: null },
+      { $set: { userId: user._id } }
+    );
+
+    const sessionData = {
+      sessionId: req.sessionID,
+      createdAt: new Date(),
+    };
+
+    // Update the user's session information in the database
+    await UserModel.findByIdAndUpdate(user._id, { $set: { session: sessionData } });
+
+    return res.json({
+      message: `User is logged in`,
+      token,
+      updatedQuizQuestions,
     });
   } catch (error) {
     console.error("Error during user login:", error);
-    // Return error message
-    res.status(500).json({
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+
+const LogoutUser = async (req, res) => {
+  try {
+    // Retrieve the user ID from the session, assuming it's stored there during login
+    console.log(req.session)
+    const userId = req.session.user;
+
+    // Check if the user is logged in
+    if (!userId) {
+      return res.status(401).json({
+        message: "User is not logged in.",
+      });
+    }
+
+    // Clear the user's session
+    req.session.destroy(async (err) => {
+      if (err) {
+        console.error("Error destroying session:", err);
+        return res.status(500).json({
+          message: "Internal Server Error",
+        });
+      }
+
+      // Optionally, update the user's session information in the database
+      await UserModel.findByIdAndUpdate(userId, { $unset: { session: "" } });
+
+      return res.json({
+        message: "Logout successful",
+      });
+    });
+  } catch (error) {
+    console.error("Error during user logout:", error);
+    return res.status(500).json({
       message: error.message,
     });
   }
@@ -139,4 +188,5 @@ module.exports = {
   LoginUser,
   RegisterUser,
   reloadQuiz,
+  LogoutUser
 };

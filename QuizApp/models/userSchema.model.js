@@ -33,6 +33,11 @@ const UserdetailSchema = new Schema({
     type: Number,
     default: 0, // You can set a default value if needed
   },
+  session: {
+    sessionId: String,
+    createdAt: { type: Date, default: Date.now },
+    // You can add more session-related fields as needed
+  },
 });
 
 // Create a mongoose model based on the schema
