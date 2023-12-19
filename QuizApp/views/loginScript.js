@@ -7,12 +7,12 @@ async function login() {
   if (email && password) {
     try {
       // Send a POST request to the login endpoint
-      const response = await fetch("http://localhost:5000/user/login", {
+      const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       });
 
       // Check if the response is OK (status code 200)

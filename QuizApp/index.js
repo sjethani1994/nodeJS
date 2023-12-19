@@ -2,47 +2,67 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
-const Port = 5000;
+const Port = 3000;
 const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
 const session = require("express-session");
 require("dotenv").config();
 const MongoStore = require("connect-mongo");
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Middleware to enable CORS
-app.use(cors());
+app.use( cors({
+  credentials: true,
+}));
 
-app.use(
-  session({
-    //
-    secret: process.env.SESSION_SECRET_KEY,
-    //resave ,is saving the session to session store , even if session has been npt been modified
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      //  secure: true  //only when u are working with https
-      httpOnly: true, // it XSS attacks;
-      maxAge: 1000 * 60 * 60 * 24,
-    },
-    store: MongoStore.create({
-      mongoUrl: process.env.Mongo_Url,
-    }),
-  })
-);
 // Function to connect to MongoDB database
 const connectDb = async () => {
   try {
-    await mongoose.connect(process.env.Mongo_Url);
+    await mongoose.connect(process.env.MONGO_URL);
     console.log("Connected to the database");
   } catch (error) {
-    console.log("Error connecting to the database:", error.message);
+    console.error("Error connecting to the database:", error.message);
   }
 };
 
 // Invoke the connectDb function to establish a connection to the database
 connectDb();
+
+// Session configuration
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET_KEY,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       maxAge: 1000 * 60 * 60 * 24,
+//     },
+//     store: MongoStore.create({
+//       mongoUrl: process.env.MONGO_URL,
+//     }),
+//   })
+// );
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+      secure: false, // Set to true in production (HTTPS)
+      sameSite: 'None', // Set to 'None' for cross-site requests
+    },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL,
+      ttl: 14 * 24 * 60 * 60, // Session TTL in seconds (optional)
+    }),
+  })
+);
 
 // Importing route modules
 const UserRoute = require("./routes/user.routes");
@@ -52,8 +72,9 @@ const QuizRoute = require("./routes/quiz.routes");
 app.use("/user", UserRoute);
 app.use("/quiz", QuizRoute);
 
-app.use("*", (req, res, next) => {
-  const error = new Error("The route does not exists.");
+// Error handling middleware
+app.use((req, res, next) => {
+  const error = new Error("The route does not exist.");
   next(error);
 });
 
@@ -63,4 +84,3 @@ app.use(errorHandler);
 app.listen(Port, () => {
   console.log(`Server is running on Port ${Port}`);
 });
-1;

@@ -20,16 +20,45 @@ const RegisterUser = async (req, res) => {
     }
 
     // Create the new user
-    const insertedData = await UserModel.create({
+    const user = await UserModel.create({
       email,
       password: hashedPassword,
       username,
     });
 
-    // Return success message and inserted data
+    // Optionally, associate quiz questions with the user upon registration
+    const updatedQuizQuestions = await quizModel.updateMany(
+      { userId: null },
+      { $set: { userId: user._id } }
+    );
+
+    // Generate a JWT token for the new user
+    const token = jwt.sign(
+      {
+        data: user._id, // Use user._id instead of user._id
+      },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    // Set the user ID in the session
+    req.session.user = user._id;
+
+    const sessionData = {
+      sessionId: req.sessionID,
+      createdAt: new Date(),
+    };
+
+    // Update the user's session information in the database
+    await UserModel.findByIdAndUpdate(user._id, {
+      $set: { session: sessionData },
+    });
+
+    // Return success message, inserted data, and the generated token
     res.status(201).json({
       message: "User registered successfully",
-      insertedData,
+      user,
+      token,
     });
   } catch (error) {
     console.error("Error during user registration:", error);
@@ -71,7 +100,7 @@ const LoginUser = async (req, res) => {
     }
 
     // Set the user ID in the session
-    req.session.user = user._id;  // Ensure this line is present
+    req.session.user = user._id; // Ensure this line is present
 
     const token = jwt.sign(
       {
@@ -93,7 +122,9 @@ const LoginUser = async (req, res) => {
     };
 
     // Update the user's session information in the database
-    await UserModel.findByIdAndUpdate(user._id, { $set: { session: sessionData } });
+    await UserModel.findByIdAndUpdate(user._id, {
+      $set: { session: sessionData },
+    });
 
     return res.json({
       message: `User is logged in`,
@@ -108,13 +139,10 @@ const LoginUser = async (req, res) => {
   }
 };
 
-
-
 const LogoutUser = async (req, res) => {
   try {
     // Retrieve the user ID from the session, assuming it's stored there during login
-    console.log(req.session)
-    const userId = req.session.user;
+    const userId = req.session.userId;
 
     // Check if the user is logged in
     if (!userId) {
@@ -188,5 +216,5 @@ module.exports = {
   LoginUser,
   RegisterUser,
   reloadQuiz,
-  LogoutUser
+  LogoutUser,
 };

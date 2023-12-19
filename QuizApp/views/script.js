@@ -14,7 +14,7 @@ let userId;
 
 // Fetch questions from the server
 function getAllQuestions() {
-  fetch("http://localhost:5000/quiz/getQuestions", { headers: headers })
+  fetch("http://localhost:3000/quiz/getQuestions", { headers: headers })
     .then((response) => response.json())
     .then((data) => {
       // Store all questions
@@ -93,7 +93,7 @@ async function submitAnswer() {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/quiz/submitAnswer", {
+      const response = await fetch("http://localhost:3000/quiz/submitAnswer", {
         method: "POST",
         headers: headers,
         body: JSON.stringify(answerData),
