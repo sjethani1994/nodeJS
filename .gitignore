@@ -14,3 +14,6 @@ githubTracker/package-lock.json
 QuizApp/node_modules/
 QuizApp/package.json
 QuizApp/package-lock.json
+flipKartServer/node_modules/
+flipKartServer/package.json
+flipKartServer/package-lock.json
