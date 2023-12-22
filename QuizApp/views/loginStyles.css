@@ -89,3 +89,13 @@ span {
   font-weight: bold;
   color: #008000; /* Green color for correct answers */
 }
+
+.register-paragraph {
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+}

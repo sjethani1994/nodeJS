@@ -183,6 +183,11 @@ function updateResultContainerVisibility() {
   correctAnswerSpan.innerText = correctAnswerCount;
   const inCorrectAnswerSpan = document.getElementById("incorrect");
   inCorrectAnswerSpan.innerText = incorrectAnswerCount;
+
+  // Calculate the percentage of correct answers
+  const score = Math.round((correctAnswerCount / allQuestions.length) * 100);
+  const scoreSpan = document.getElementById("score");
+  scoreSpan.innerText = `${score}%`;
 }
 
 // Logout function with additional logic
