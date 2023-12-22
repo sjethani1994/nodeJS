@@ -1,20 +1,20 @@
 // Initialize variables to keep track of the current question index and store all questions
 let currentQuestionIndex = 0;
 let allQuestions = [];
+let correctAnswerCount = 0;
+let incorrectAnswerCount = 0;
+let userId;
 
 // Authorization token
 const token = sessionStorage.getItem("token");
-
 const headers = new Headers({
   "Content-Type": "application/json",
   Authorization: token,
 });
 
-let userId;
-
 // Fetch questions from the server
 function getAllQuestions() {
-  fetch("http://localhost:3000/quiz/getQuestions", { headers: headers })
+  fetch("http://localhost:5000/quiz/getQuestions", { headers: headers })
     .then((response) => response.json())
     .then((data) => {
       // Store all questions
@@ -24,7 +24,7 @@ function getAllQuestions() {
       displayCurrentQuestion();
     })
     .catch((error) => {
-      window.location.href = "login.html";
+      window.location.href = "login.html"; // Redirect to login.html on error
       console.error("Error fetching questions:", error);
     });
 }
@@ -44,6 +44,10 @@ function displayCurrentQuestion() {
   // Create a new question container for each question
   const questionDiv = document.createElement("div");
   questionDiv.className = "question";
+
+  const heading = document.createElement("h3");
+  heading.innerText = `You have attempted ${currentQuestionIndex} no. of Questions`;
+  questionDiv.appendChild(heading);
 
   // Display current question
   const questionText = document.createElement("p");
@@ -93,7 +97,7 @@ async function submitAnswer() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/quiz/submitAnswer", {
+      const response = await fetch("http://localhost:5000/quiz/submitAnswer", {
         method: "POST",
         headers: headers,
         body: JSON.stringify(answerData),
@@ -109,9 +113,9 @@ async function submitAnswer() {
     }
 
     if (currentQuestion.correctOption === selectedAnswer.value) {
-      console.log("Correct Answer");
+      correctAnswerCount++;
     } else {
-      console.log("Wrong Answer");
+      incorrectAnswerCount++;
     }
 
     // Move to the next question
@@ -123,13 +127,14 @@ async function submitAnswer() {
       displayCurrentQuestion();
     } else {
       console.log("Quiz completed!");
-      updateReloadButtonVisibility();
+      updateResultContainerVisibility();
     }
   } else {
     console.log("Please select an answer.");
   }
 }
 
+// Reset quiz and fetch new set of questions
 async function reloadQuiz() {
   if (currentQuestionIndex >= allQuestions.length) {
     try {
@@ -146,19 +151,41 @@ async function reloadQuiz() {
       }
 
       const data = await response.json();
-      console.log(data);
+
+      // Reset quiz-related variables
+      currentQuestionIndex = 0;
+      correctAnswerCount = 0;
+      incorrectAnswerCount = 0;
+
+      // Hide result container and show quiz container
+      const resultContainer = document.getElementById("result-container");
+      resultContainer.style.display = "none";
+      const quizContainer = document.getElementById("quiz-container");
+      quizContainer.style.display = "block";
+
+      // Display the first question of the new set
+      displayCurrentQuestion();
     } catch (error) {
       console.error("Error sending data to the server:", error);
     }
   }
 }
 
-// Function to update the visibility of the Reload Quiz button
-function updateReloadButtonVisibility() {
-  const reloadButton = document.getElementById("reloadQuizBtn");
-  reloadButton.style.display = "inline"; // Show the button
+// Function to update the visibility of the result container and display scores
+function updateResultContainerVisibility() {
+  const resultContainer = document.getElementById("result-container");
+  resultContainer.style.display = "block";
+  const quizContainer = document.getElementById("quiz-container");
+  quizContainer.style.display = "none";
+
+  // Display scores
+  const correctAnswerSpan = document.getElementById("correct");
+  correctAnswerSpan.innerText = correctAnswerCount;
+  const inCorrectAnswerSpan = document.getElementById("incorrect");
+  inCorrectAnswerSpan.innerText = incorrectAnswerCount;
 }
 
+// Logout function with additional logic
 async function logout() {
   if (currentQuestionIndex >= allQuestions.length) {
     try {
@@ -175,11 +202,11 @@ async function logout() {
       }
 
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error("Error sending data to the server:", error);
     }
   }
 }
+
 // Fetch and display questions when the page loads
 getAllQuestions();

@@ -8,7 +8,7 @@ async function register() {
   if (email && password) {
     try {
       // Send a POST request to the registration endpoint
-      const response = await fetch("http://localhost:3000/user/register", {
+      const response = await fetch("http://localhost:5000/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

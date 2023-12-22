@@ -189,6 +189,12 @@ const reloadQuiz = async (req, res) => {
       });
     }
 
+    if (!req.sessionID) {
+      return res.status(401).json({
+        message: "Unauthorized. Please log in.",
+      });
+    }
+
     // Reset the user's score to 0
     user.score = 0;
 

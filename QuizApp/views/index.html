@@ -31,7 +31,7 @@
 
   <body>
     <!-- Quiz container -->
-    <div class="quiz-container">
+    <div class="quiz-container" id="quiz-container">
       <!-- Display the question -->
       <div class="question" id="question"></div>
 
@@ -45,15 +45,33 @@
       >
         Submit Answer
       </button>
-      <button
-        id="reloadQuizBtn"
-        class="submit-btn btn btn-outline-danger"
-        onclick="reloadQuiz()"
-      >
-        Reload Quiz
-      </button>
     </div>
 
+    <div class="container mt-5 text-center" id="result-container">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="card-title">Quiz Results</h1>
+          <div class="result">
+            <p class="card-text">Score: <span id="score">80%</span></p>
+            <p class="card-text">
+              Correct Answers: <span id="correct"></span>
+            </p>
+            <p class="card-text">
+              Incorrect Answers: <span id="incorrect"></span>
+            </p>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+          <button
+            id="reloadQuizBtn"
+            class="submit-btn btn btn-outline-danger"
+            onclick="reloadQuiz()"
+          >
+            Reload Quiz
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- Link your custom JavaScript file here -->
     <script src="./script.js"></script>
   </body>

@@ -1,4 +1,5 @@
-async function login() {
+async function login(event) {
+  event.preventDefault(); // Prevent default form submission
   // Get user input
   let email = document.getElementById("email").value;
   let password = document.getElementById("password").value;
@@ -7,7 +8,7 @@ async function login() {
   if (email && password) {
     try {
       // Send a POST request to the login endpoint
-      const response = await fetch("http://localhost:3000/user/login", {
+      const response = await fetch("http://localhost:5000/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
