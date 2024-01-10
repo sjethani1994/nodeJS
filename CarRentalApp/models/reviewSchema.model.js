@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const reviewSchema = new Schema({
-  commentMsg: {
+  reviewMsg: {
     type: String,
     required: true,
   },
@@ -11,7 +11,7 @@ const reviewSchema = new Schema({
     ref: "userDetails",
     required: true,
   },
-  productId: {
+  carId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "carListings",
     required: true,
