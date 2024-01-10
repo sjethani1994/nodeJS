@@ -49,10 +49,12 @@ app.use(
 // Importing route modules
 const UserRoute = require("./routes/user.routes");
 const CarRoute = require("./routes/car.routes");
+const reviewsRoute = require("./routes/reviews.routes");
 
 // Set up routes for different endpoints
 app.use("/user", UserRoute);
 app.use("/car", CarRoute);
+app.use("/review", reviewsRoute);
 
 // Error handling middleware
 app.use((req, res, next) => {
