@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const RegisterUser = async (req, res) => {
   try {
     // Extract user information from the request body
-    const { email, password, username } = req.body;
+    const { email, password, username, isAdmin, isCustomer } = req.body;
     const hashedPassword = await bcryptPassword(password);
 
     // Check if the email already exists in the database
@@ -23,16 +23,9 @@ const RegisterUser = async (req, res) => {
       email,
       password: hashedPassword,
       username,
+      isAdmin: isAdmin ? isAdmin : false,
+      isCustomer: isCustomer ? isCustomer : false,
     });
-
-    // Generate a JWT token for the new user
-    const token = jwt.sign(
-      {
-        data: user._id, // Use user._id instead of user._id
-      },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "1h" }
-    );
 
     // Set the user ID in the session
     req.session.user = user._id;
@@ -51,7 +44,11 @@ const RegisterUser = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       user,
-      token,
+      token: generateToken(
+        user._id,
+        { isAdmin: isAdmin ? "admin" : "customer" },
+        sessionData.sessionId
+      ),
     });
   } catch (error) {
     console.error("Error during user registration:", error);
@@ -95,14 +92,6 @@ const LoginUser = async (req, res) => {
     // Set the user ID in the session
     req.session.user = user._id; // Ensure this line is present
 
-    const token = jwt.sign(
-      {
-        data: user._id,
-      },
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "1h" }
-    );
-
     const sessionData = {
       sessionId: req.sessionID,
       createdAt: new Date(),
@@ -113,16 +102,47 @@ const LoginUser = async (req, res) => {
       $set: { session: sessionData },
     });
 
-    return res.json({
-      message: `User is logged in`,
-      token,
-    });
+    // Check user role and redirect accordingly
+    if (user.isAdmin) {
+      return res.json({
+        message: `Admin is logged in`,
+        token: generateToken(user._id, "admin", req.sessionID),
+        role: "admin",
+      });
+    } else if (user.isCustomer) {
+      return res.json({
+        message: `Customer is logged in`,
+        token: generateToken(user._id, "customer", req.sessionID),
+        role: "customer",
+      });
+    } else {
+      return res.json({
+        message: `Unknown role. Please contact support.`,
+      });
+    }
   } catch (error) {
     console.error("Error during user login:", error);
     return res.status(500).json({
       message: error.message,
     });
   }
+};
+
+const generateToken = (userId, role, sessionId) => {
+  const token = jwt.sign(
+    {
+      userId: userId,
+      role: role,
+      sessionData: {
+        sessionId: sessionId,
+        createdAt: new Date(),
+      },
+    },
+    process.env.JWT_SECRET_KEY,
+    { expiresIn: "1h" }
+  );
+
+  return token;
 };
 
 const LogoutUser = async (req, res) => {
@@ -147,7 +167,9 @@ const LogoutUser = async (req, res) => {
       }
 
       // Optionally, update the user's session information in the database
-      await UserDetailModel.findByIdAndUpdate(userId, { $unset: { session: "" } });
+      await UserDetailModel.findByIdAndUpdate(userId, {
+        $unset: { session: "" },
+      });
 
       return res.json({
         message: "Logout successful",
