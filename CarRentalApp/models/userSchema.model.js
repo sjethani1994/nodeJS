@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 // Define a schema for user details
-const UserdetailSchema = new Schema({
+const UserDetailSchema = new Schema({
   // Username of the user
   username: {
     type: String,
@@ -17,6 +17,7 @@ const UserdetailSchema = new Schema({
     required: true,
     unique: true,
     trim: true,
+    // Add a comment explaining the constraints
   },
   // Password of the user with custom validation
   password: {
@@ -31,17 +32,24 @@ const UserdetailSchema = new Schema({
   },
   score: {
     type: Number,
-    default: 0, // You can set a default value if needed
+    default: 0,
   },
   session: {
     sessionId: String,
     createdAt: { type: Date, default: Date.now },
-    // You can add more session-related fields as needed
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isCustomer: {
+    type: Boolean,
+    default: false,
   },
 });
 
 // Create a mongoose model based on the schema
-const UserModel = mongoose.model("userDetails", UserdetailSchema);
+const UserDetailModel = mongoose.model("userDetails", UserDetailSchema);
 
 // Export the model for use in other parts of the application
-module.exports = UserModel;
+module.exports = UserDetailModel;

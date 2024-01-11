@@ -1,4 +1,4 @@
-const UserModel = require("../models/userSchema.model");
+const UserDetailModel = require("../models/userSchema.model");
 const bcryptPassword = require("../utils/bcryptPassword");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -11,7 +11,7 @@ const RegisterUser = async (req, res) => {
     const hashedPassword = await bcryptPassword(password);
 
     // Check if the email already exists in the database
-    const existingUser = await UserModel.findOne({ email: email });
+    const existingUser = await UserDetailModel.findOne({ email: email });
     if (existingUser) {
       return res.status(400).json({
         message: "Email is already registered. Please use a different email.",
@@ -19,7 +19,7 @@ const RegisterUser = async (req, res) => {
     }
 
     // Create the new user
-    const user = await UserModel.create({
+    const user = await UserDetailModel.create({
       email,
       password: hashedPassword,
       username,
@@ -43,7 +43,7 @@ const RegisterUser = async (req, res) => {
     };
 
     // Update the user's session information in the database
-    await UserModel.findByIdAndUpdate(user._id, {
+    await UserDetailModel.findByIdAndUpdate(user._id, {
       $set: { session: sessionData },
     });
 
@@ -75,7 +75,7 @@ const LoginUser = async (req, res) => {
     }
 
     // Check if the user with the provided email exists
-    const user = await UserModel.findOne({ email: email });
+    const user = await UserDetailModel.findOne({ email: email });
 
     if (!user) {
       return res.json({
@@ -109,7 +109,7 @@ const LoginUser = async (req, res) => {
     };
 
     // Update the user's session information in the database
-    await UserModel.findByIdAndUpdate(user._id, {
+    await UserDetailModel.findByIdAndUpdate(user._id, {
       $set: { session: sessionData },
     });
 
@@ -147,7 +147,7 @@ const LogoutUser = async (req, res) => {
       }
 
       // Optionally, update the user's session information in the database
-      await UserModel.findByIdAndUpdate(userId, { $unset: { session: "" } });
+      await UserDetailModel.findByIdAndUpdate(userId, { $unset: { session: "" } });
 
       return res.json({
         message: "Logout successful",
