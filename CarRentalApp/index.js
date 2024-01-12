@@ -1,13 +1,26 @@
+// Importing required modules
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const app = express();
-const Port = 5000;
-const errorHandler = require("./utils/errorHandler");
-require("dotenv").config();
 const session = require("express-session");
-require("dotenv").config();
 const MongoStore = require("connect-mongo");
+
+// Importing route modules
+const UserRoute = require("./routes/user.routes");
+const CarRoute = require("./routes/car.routes");
+const ReviewsRoute = require("./routes/reviews.routes");
+
+// Custom error handling middleware
+const errorHandler = require("./utils/errorHandler");
+
+// Load environment variables from .env file
+require("dotenv").config();
+
+// Create an Express application
+const app = express();
+
+// Set the port for the server
+const Port = process.env.PORT || 5000;
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -28,6 +41,7 @@ const connectDb = async () => {
 // Invoke the connectDb function to establish a connection to the database
 connectDb();
 
+// Configure session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET_KEY,
@@ -46,22 +60,18 @@ app.use(
   })
 );
 
-// Importing route modules
-const UserRoute = require("./routes/user.routes");
-const CarRoute = require("./routes/car.routes");
-const reviewsRoute = require("./routes/reviews.routes");
-
 // Set up routes for different endpoints
 app.use("/user", UserRoute);
 app.use("/car", CarRoute);
-app.use("/review", reviewsRoute);
+app.use("/review", ReviewsRoute);
 
-// Error handling middleware
+// Middleware for handling non-existent routes
 app.use((req, res, next) => {
   const error = new Error("The route does not exist.");
   next(error);
 });
 
+// Error handling middleware
 app.use(errorHandler);
 
 // Start the server and listen on the specified port
