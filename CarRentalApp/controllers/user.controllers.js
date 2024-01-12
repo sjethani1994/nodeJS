@@ -30,15 +30,8 @@ const RegisterUser = async (req, res) => {
     // Set the user ID in the session
     req.session.user = user._id;
 
-    const sessionData = {
-      sessionId: req.sessionID,
-      createdAt: new Date(),
-    };
-
     // Update the user's session information in the database
-    await UserDetailModel.findByIdAndUpdate(user._id, {
-      $set: { session: sessionData },
-    });
+    await updateUserSession(user._id, req.sessionID);
 
     // Return success message, inserted data, and the generated token
     res.status(201).json({
@@ -92,15 +85,8 @@ const LoginUser = async (req, res) => {
     // Set the user ID in the session
     req.session.user = user._id; // Ensure this line is present
 
-    const sessionData = {
-      sessionId: req.sessionID,
-      createdAt: new Date(),
-    };
-
     // Update the user's session information in the database
-    await UserDetailModel.findByIdAndUpdate(user._id, {
-      $set: { session: sessionData },
-    });
+    await updateUserSession(user._id, req.sessionID);
 
     // Check user role and redirect accordingly
     if (user.isAdmin) {
@@ -143,6 +129,23 @@ const generateToken = (userId, role, sessionId) => {
   );
 
   return token;
+};
+
+const updateUserSession = async (userId, sessionID) => {
+  try {
+    const sessionData = {
+      sessionId: sessionID,
+      createdAt: new Date(),
+    };
+
+    // Update the user's session information in the database
+    await UserDetailModel.findByIdAndUpdate(userId, {
+      $set: { session: sessionData },
+    });
+  } catch (error) {
+    console.error("Error updating user session:", error);
+    throw error;
+  }
 };
 
 const LogoutUser = async (req, res) => {

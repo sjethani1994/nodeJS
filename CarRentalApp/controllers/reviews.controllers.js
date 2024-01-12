@@ -49,7 +49,7 @@ const updateReview = async (req, res) => {
     const { reviewMsg, productId, userId } = req.body;
 
     // Update the review and get the updated document
-    const updateReview = await reviewModel.findByIdAndUpdate(
+    const updatedreview = await reviewModel.findByIdAndUpdate(
       id,
       { reviewMsg, productId, userId },
       { new: true }

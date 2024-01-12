@@ -66,8 +66,39 @@ const addCar = async (req, res) => {
   }
 };
 
+const deleteCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Create a new car in the database
+    const deletedCar = await CarModel.findByIdAndDelete(id);
+
+    // Check if the car was found and deleted
+    if (!deletedCar) {
+      return res.status(404).json({
+        message: `car with provided id ${id} not found or could not be deleted`,
+      });
+    }
+
+    // Return success message and deleted car
+    res.status(200).json({
+      message: "Car deleted successfully",
+      car: deletedCar,
+    });
+  } catch (error) {
+    console.error("Error deleting cars:", error);
+
+    // Return error message
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 // Exporting functions for use in the routes
 module.exports = {
   getCarList,
   addCar,
+  deleteCar,
 };
