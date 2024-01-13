@@ -66,6 +66,11 @@ const addCar = async (req, res) => {
   }
 };
 
+/**
+ * Function to delete a car
+ * @param {Object} req - Express request object with car details in the body
+ * @param {Object} res - Express response object
+ */
 const deleteCar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -96,9 +101,52 @@ const deleteCar = async (req, res) => {
   }
 };
 
+/**
+ * Function to update a car
+ * @param {Object} req - Express request object with car details in the body
+ * @param {Object} res - Express response object
+ */
+
+const updateCarDetails = async (req, res) => {
+  try {
+    // Extract car ID from request parameters and car details from request body
+    const { id } = req.params;
+    const { model, make, year, price, available, features, image } = req.body;
+
+    // Update the car details and get the updated document
+    const updatedCarDetails = await CarModel.findByIdAndUpdate(
+      id,
+      { model, make, year, price, available, features, image },
+      { new: true } // This option returns the modified document rather than the original one
+    );
+
+    // Check if the car was found and updated
+    if (!updatedCarDetails) {
+      return res.status(404).json({
+        message: "Car not found or could not be updated",
+      });
+    }
+
+    // Respond with the updated car details
+    res.status(200).json({
+      message: "Car details updated successfully",
+      updatedCarDetails,
+    });
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error("Error during updating car details:", error);
+
+    // Return an internal server error response with details
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};
 // Exporting functions for use in the routes
 module.exports = {
   getCarList,
   addCar,
   deleteCar,
+  updateCarDetails,
 };
