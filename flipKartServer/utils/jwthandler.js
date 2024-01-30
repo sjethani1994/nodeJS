@@ -12,7 +12,6 @@ async function jwtHandler(req,res,next){
 
     try {
         const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY);
-        console.log(decoded.data,"from jwt handler");
         req.userId =decoded.data;
         next();
     } catch (error) {

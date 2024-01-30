@@ -9,7 +9,10 @@ require("dotenv").config();
 app.use(express.json());
 
 // Middleware to enable CORS
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // Replace with your React app's URL
+  credentials: true,
+}));
 
 // Function to connect to MongoDB database
 const connectDb = async () => {

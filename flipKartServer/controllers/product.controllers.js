@@ -1,27 +1,52 @@
+// Import the ProductModel from the product.model file
 const ProductModel = require("../models/product.model");
+
+// Function to get all products
+const getAllProducts = async (req, res) => {
+  try {
+    // Retrieve all products from the database
+    const allProducts = await ProductModel.find();
+
+    // Respond with a success message, all products, and the total number of products
+    res.status(200).json({
+      message: "All documents",
+      allProducts,
+      totalProducts: allProducts.length,
+    });
+  } catch (error) {
+    // Handle errors and respond with an error message
+    console.log(error);
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
 
 // Function to add a new product
 const addProduct = async (req, res) => {
   try {
-    // Extracting product information from the request body
-    const { productname, category, productdetails, price, rating } = req.body;
+    // Extract product information from the request body
+    const { title, price, description, category, subCategory, image, rating } =
+      req.body;
 
-    // Creating a new product using the ProductModel
+    // Create a new product using the ProductModel
     const insertedProduct = await ProductModel.create({
-      productname,
-      category,
-      productdetails,
+      title,
+      description,
       price,
+      category,
+      subCategory,
+      image,
       rating,
     });
 
-    // Returning success message and inserted product details
+    // Respond with a success message and the details of the inserted product
     res.status(200).json({
       message: "Product inserted successfully",
       insertedProduct,
     });
   } catch (error) {
-    // Logging the error and returning an error response
+    // Handle errors and respond with an error message
     console.log(error.message);
     res.status(404).json({
       message: error.message,
@@ -32,26 +57,26 @@ const addProduct = async (req, res) => {
 // Function to update product details
 const updateProduct = async (req, res) => {
   try {
-    // Extracting product ID from request parameters
+    // Extract product ID from request parameters
     const { id } = req.params;
 
-    // Extracting updated product details from the request body
-    const { productdetails, price } = req.body;
+    // Extract updated product details from the request body
+    const { title, price } = req.body;
 
-    // Updating the product details based on the product ID
+    // Update the product details based on the product ID
     const updatedProduct = await ProductModel.findOneAndUpdate(
       { _id: id },
-      { productdetails, price },
+      { title, price },
       { new: true }
     );
 
-    // Returning success message and updated product details
+    // Respond with a success message and the updated product details
     res.status(201).json({
       message: "Product data updated",
       updatedProduct,
     });
   } catch (error) {
-    // Logging the error and returning an error response
+    // Handle errors and respond with an error message
     console.log(error.message);
     res.status(404).json({
       message: error.message,
@@ -59,23 +84,59 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// Function to filter products based on price range
+// Function to filter products
 const filterProduct = async (req, res) => {
   try {
-    // Extracting minimum and maximum prices from query parameters
-    const { minprice, maxprice } = req.query;
+    // Extract the category from query parameters
+    const { category, subCategory } = req.query;
 
-    // Filtering products based on the specified price range
-    const filteredProduct = await ProductModel.find({
-      price: { $gte: minprice, $lte: maxprice },
-    });
+    // Construct the query with AND condition
+    let query = {};
 
-    // Returning the filtered products
+    if (category && subCategory) {
+      // If both category and subCategory are provided, use $and
+      query = { $and: [{ category }, { subCategory }] };
+    } else {
+      // If either category or subCategory is provided, use $or
+      query = { $or: [{ category }, { subCategory }] };
+    }
+
+    const filteredProducts = await ProductModel.find(query);
+
+    // Respond with the filtered products
     res.status(200).json({
-      filteredProduct,
+      filteredProducts,
     });
   } catch (error) {
-    // Logging the error and returning an error response
+    // Handle errors and respond with an error message
+    console.log(error.message);
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
+// Function to filter products
+const searchProduct = async (req, res) => {
+  try {
+    // Extract the category from query parameters
+    const { searchTerm } = req.query;
+
+    // Construct the query to search for products
+    const regex = new RegExp(searchTerm, "i"); // 'i' for case-insensitive
+    const searchQuery = {
+      $or: [{ title: regex }, { category: regex }, { subcategory: regex }],
+    };
+
+    // Search for products based on the constructed query
+    const filteredProducts = await ProductModel.find(searchQuery);
+
+    // Respond with the filtered products
+    res.status(200).json({
+      filteredProducts,
+    });
+  } catch (error) {
+    // Handle errors and respond with an error message
     console.log(error.message);
     res.status(404).json({
       message: error.message,
@@ -84,7 +145,7 @@ const filterProduct = async (req, res) => {
 };
 
 // Function to delete a product
-const deleteproduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
     // Extract product ID from request parameters
     const { productId } = req.params;
@@ -113,10 +174,12 @@ const deleteproduct = async (req, res) => {
   }
 };
 
-// Exporting functions for use in the routes
+// Export functions for use in the routes
 module.exports = {
+  getAllProducts,
   addProduct,
   updateProduct,
   filterProduct,
-  deleteproduct,
+  searchProduct,
+  deleteProduct,
 };

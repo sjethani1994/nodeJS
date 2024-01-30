@@ -1,10 +1,10 @@
 const { Octokit } = require("@octokit/core");
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const cors = require("cors");
 const octokit = new Octokit({
-  auth: "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",
+  auth: "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",
 });
 
 app.use(express.static("public"));

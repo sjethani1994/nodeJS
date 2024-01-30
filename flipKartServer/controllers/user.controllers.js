@@ -31,9 +31,19 @@ const RegisterUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Error during user registration:", error);
-    // Return error message
+
+    // Check for specific error types and provide appropriate error messages
+    if (error.name === "ValidationError") {
+      // Validation error in user input
+      return res.status(400).json({
+        message: "Validation error. Please check your input data.",
+        errorDetails: error.errors, // Optionally, you can provide details of the validation errors
+      });
+    }
+
+    // Generic server error
     res.status(500).json({
-      message: error.message,
+      message: "Internal server error during user registration.",
     });
   }
 };
@@ -44,7 +54,7 @@ const LoginUser = async (req, res) => {
 
   // Check if required credentials are provided
   if (!email || !password) {
-    return res.json({
+    return res.status(400).json({
       message: "Please enter both email and password.",
     });
   }
@@ -53,13 +63,15 @@ const LoginUser = async (req, res) => {
   const user = await UserModel.findOne({ email: email });
 
   if (!user) {
-    return res.json({
+    return res.status(404).json({
       message: `User with this ${email} is not found.`,
     });
   }
 
-  const ismatchedPassword = await bcrypt.compare(password, user.password);
-  if (ismatchedPassword) {
+  // Check if the provided password matches the stored password using bcrypt
+  const isMatchedPassword = await bcrypt.compare(password, user.password);
+
+  if (isMatchedPassword) {
     const token = jwt.sign(
       {
         data: user._id,
@@ -67,24 +79,19 @@ const LoginUser = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1h" }
     );
-    return res.json({
-      message: `User is loggedin`,
+    return res.status(200).json({
+      message: `User is logged in`,
       token,
     });
   }
 
-  // Check if the provided password matches the stored password
-  if (user.password === password) {
-    return res.json({
-      message: `User with ${email} has been logged in.`,
-    });
-  }
-
   // Return a message for incorrect password
-  res.json({
+  res.status(401).json({
     message: `User is not able to login due to wrong password.`,
   });
 };
+
+module.exports = LoginUser;
 
 // Function to update user information
 const updateUser = async (req, res) => {
