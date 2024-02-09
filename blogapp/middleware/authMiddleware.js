@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-async function jwtHandler(req, res, next) {
+async function authMiddleware(req, res, next) {
   // Retrieve token from the Authorization header
   const token = req.header("Authorization");
 
@@ -36,4 +36,4 @@ async function jwtHandler(req, res, next) {
   }
 }
 
-module.exports = jwtHandler;
+module.exports = authMiddleware;

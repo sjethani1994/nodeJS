@@ -22,6 +22,29 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+// Function to update product details
+const getProductById = async (req, res) => {
+  try {
+    // Extract product ID from request parameters
+    const { id } = req.params;
+
+    // Update the product details based on the product ID
+    const product = await ProductModel.findById({ _id: id });
+
+    // Respond with a success message and the updated product details
+    res.status(201).json({
+      message: `Product with ${id}`,
+      product,
+    });
+  } catch (error) {
+    // Handle errors and respond with an error message
+    console.log(error.message);
+    res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
 // Function to add a new product
 const addProduct = async (req, res) => {
   try {
@@ -177,6 +200,7 @@ const deleteProduct = async (req, res) => {
 // Export functions for use in the routes
 module.exports = {
   getAllProducts,
+  getProductById,
   addProduct,
   updateProduct,
   filterProduct,

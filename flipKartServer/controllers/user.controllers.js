@@ -63,7 +63,7 @@ const LoginUser = async (req, res) => {
   const user = await UserModel.findOne({ email: email });
 
   if (!user) {
-    return res.status(404).json({
+    return res.status(401).json({
       message: `User with this ${email} is not found.`,
     });
   }
@@ -79,6 +79,7 @@ const LoginUser = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1h" }
     );
+
     return res.status(200).json({
       message: `User is logged in`,
       token,
@@ -90,8 +91,6 @@ const LoginUser = async (req, res) => {
     message: `User is not able to login due to wrong password.`,
   });
 };
-
-module.exports = LoginUser;
 
 // Function to update user information
 const updateUser = async (req, res) => {

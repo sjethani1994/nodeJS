@@ -6,6 +6,7 @@ const {
   filterProduct,
   deleteProduct,
   searchProduct,
+  getProductById,
 } = require("../controllers/product.controllers");
 const jwtHandler = require("../utils/jwthandler");
 
@@ -14,6 +15,9 @@ const productRoute = express.Router();
 
 // Route to get All Porducts
 productRoute.get("/getAllProducts", jwtHandler, getAllProducts);
+
+// Route to get a specific product by its Id
+productRoute.get("/getProductById/:id", jwtHandler, getProductById);
 
 // Route to add a new product
 productRoute.post("/addProduct", jwtHandler, addProduct);
