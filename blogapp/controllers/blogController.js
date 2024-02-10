@@ -1,5 +1,15 @@
 const Blog = require("../models/Blog");
-
+const multer = require("multer");
+// Multer setup
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 // Create a new blog
 exports.createBlog = async (req, res) => {
   try {
