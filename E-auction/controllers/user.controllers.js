@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken"); // Import the jsonwebtoken library
 const RegisterUser = async (req, res) => {
   try {
     // Extracting user information from the request body
-    const { firstName, lastName, address, email, password, username } =
+    const { firstName, lastName, username, email, password, address } =
       req.body;
     const hashedPassword = await bcryptPassword(password);
 
@@ -22,10 +22,10 @@ const RegisterUser = async (req, res) => {
     const insertedData = await UserModel.create({
       firstName,
       lastName,
-      address,
+      username,
       email,
       password: hashedPassword,
-      username,
+      address,
     });
 
     // Return success message and inserted data

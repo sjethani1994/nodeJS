@@ -31,9 +31,10 @@ connectDb();
 
 // Importing route modules
 const UserRoute = require("./routes/user.routes");
-
+const productRoute = require("./routes/product.routes");
 // Set up routes for different endpoints
 app.use("/user", UserRoute);
+app.use("/product", productRoute);
 
 app.use("*", (req, res, next) => {
   const error = new Error("The route does not exists.");
