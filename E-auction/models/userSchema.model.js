@@ -29,10 +29,25 @@ const UserdetailSchema = new Schema({
       message: "Password should be greater than 7 characters",
     },
   },
+  // First name of the user
+  firstName: {
+    type: String,
+    trim: true,
+  },
+  // Last name of the user
+  lastName: {
+    type: String,
+    trim: true,
+  },
+  // Address of the user
+  address: {
+    type: String,
+    trim: true,
+  },
 });
 
 // Create a mongoose model based on the schema
-const UserModel = mongoose.model("flipkartusers", UserdetailSchema);
+const UserModel = mongoose.model("users", UserdetailSchema);
 
 // Export the model for use in other parts of the application
 module.exports = UserModel;

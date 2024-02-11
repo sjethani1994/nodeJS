@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken"); // Import the jsonwebtoken library
 const RegisterUser = async (req, res) => {
   try {
     // Extracting user information from the request body
-    const { email, password, username } = req.body;
+    const { firstName, lastName, address, email, password, username } =
+      req.body;
     const hashedPassword = await bcryptPassword(password);
 
     // Check if the email already exists in the database
@@ -19,6 +20,9 @@ const RegisterUser = async (req, res) => {
 
     // Create the new user
     const insertedData = await UserModel.create({
+      firstName,
+      lastName,
+      address,
       email,
       password: hashedPassword,
       username,
