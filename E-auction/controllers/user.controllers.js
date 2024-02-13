@@ -1,3 +1,4 @@
+const newsLetterModel = require("../models/newsLetter.model");
 const UserModel = require("../models/userSchema.model");
 const bcryptPassword = require("../utils/bcryptPassword");
 const bcrypt = require("bcryptjs");
@@ -183,10 +184,43 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const newsLetter = async (req, res) => {
+  const { email } = req.body;
+
+  // Check if email is provided and valid
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  try {
+    // Check if email is already subscribed
+    const existingSubscriber = await newsLetterModel.findOne({ email: email });
+    if (existingSubscriber) {
+      return res.status(400).json({ error: "Email is already subscribed" });
+    }
+
+    // Create new subscriber
+    const newSubscriber = await newsLetterModel.create({
+      email,
+    });
+
+    res.json({ message: "Successfully subscribed to newsletter", newSubscriber });
+  } catch (error) {
+    console.error("Error subscribing to newsletter:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+// Function to validate email format (basic validation)
+function isValidEmail(email) {
+  const emailRegex = /\S+@\S+\.\S+/;
+  return emailRegex.test(email);
+}
+
 // Exporting functions for use in the routes
 module.exports = {
   LoginUser,
   RegisterUser,
   updateUser,
   deleteUser,
+  newsLetter,
 };

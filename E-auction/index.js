@@ -5,6 +5,8 @@ const app = express();
 const Port = 5000;
 const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
+// const startDatabaseListener = require("./utils/databaseListener");
+
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -21,6 +23,9 @@ const connectDb = async () => {
   try {
     await mongoose.connect(process.env.Mongo_Url);
     console.log("Connected to the database");
+
+    // Start listening for changes in the database
+    // startDatabaseListener(server);
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
   }
@@ -37,13 +42,13 @@ app.use("/user", UserRoute);
 app.use("/product", productRoute);
 
 app.use("*", (req, res, next) => {
-  const error = new Error("The route does not exists.");
+  const error = new Error("The route does not exist.");
   next(error);
 });
 
 app.use(errorHandler);
 
 // Start the server and listen on the specified port
-app.listen(Port, () => {
+const server = app.listen(Port, () => {
   console.log(`Server is running on Port ${Port}`);
 });
