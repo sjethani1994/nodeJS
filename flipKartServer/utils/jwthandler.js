@@ -27,8 +27,6 @@ async function jwtHandler(req, res, next) {
         message: "Unauthorized: token has expired",
       });
     } else {
-      // Other token-related errors
-      console.log(error.message);
       return res.status(401).json({
         message: "Unauthorized: invalid token",
       });

@@ -8,7 +8,6 @@ function startDatabaseListener(server) {
   db.collection("users")
     .watch()
     .on("change", (change) => {
-      console.log("Change detected in users collection:", change);
       if (change.operationType === "update") {
         io.emit("userUpdate", change.fullDocument);
       }
@@ -17,7 +16,6 @@ function startDatabaseListener(server) {
   db.collection("products")
     .watch()
     .on("change", (change) => {
-      console.log("Change detected in products collection:", change);
       if (change.operationType === "update") {
         io.emit("productUpdate", change.fullDocument);
       }

@@ -71,9 +71,7 @@ const tasks = [
 ];
 
 // Starting the server
-app.listen(port, () => {
-  console.log("Server Started");
-});
+app.listen(port);
 
 // Route for the root of the application
 app.get("/", (req, res) => {

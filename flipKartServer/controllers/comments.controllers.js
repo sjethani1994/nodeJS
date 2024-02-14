@@ -15,7 +15,6 @@ const addComments = async(req,res)=>{
         createdComment
     })
    } catch (error) {
-    console.log(error.message,"from comment api");
     res.status(404).json({
         message:error.message
     })
@@ -31,7 +30,6 @@ const allComments = async(req,res)=>{
             allComments
         })
     } catch (error) {
-        console.log(error);
         res.status(404).json({
             message:error.message
         })

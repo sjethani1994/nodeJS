@@ -1,24 +1,18 @@
 const Blog = require("../models/Blog");
 const multer = require("multer");
-// Multer setup
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+
 // Create a new blog
-exports.createBlog = async (req, res) => {
+exports.upload = async (req, res) => {
   try {
-    const { title, content, image, userId } = req.body;
-    const newBlog = new Blog({ title, content, image, userId: userId });
+    const { title, content, userId } = req.body;
+    const imagePath = req.file.path; // Getting the path of the uploaded image
+
+    // Create a new blog entry with the image path
+    const newBlog = new Blog({ title, content, avatar: imagePath, userId });
+
     await newBlog.save();
-    res
-      .status(201)
-      .json({ message: "Blog created successfully", blog: newBlog });
+
+    res.status(201).json({ message: "Blog created successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -60,16 +54,19 @@ exports.getBlogById = async (req, res) => {
 // Update blog
 exports.updateBlog = async (req, res) => {
   try {
-    const { title, content, image } = req.body;
+    const { title, content, userId } = req.body;
+    const imagePath = req.file.path; // Getting the path of the uploaded image
+
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.id,
-      { title, content, image },
+      { title, content, avatar: imagePath, userId },
       { new: true }
     );
     if (!updatedBlog) {
       return res.status(404).json({ message: "Blog not found" });
     }
-    res.status(200).json(updatedBlog);
+    // Send the response with proper JSON formatting
+    res.status(200).json({ message: "Blog Updated Successfully", updatedBlog });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -16,7 +16,6 @@ const addReviews = async (req, res) => {
       createdReview,
     });
   } catch (error) {
-    console.log(error.message, "from review api");
     res.status(404).json({
       message: error.message,
     });
@@ -35,7 +34,6 @@ const getReviews = async (req, res) => {
       allReviews,
     });
   } catch (error) {
-    console.log(error);
     res.status(404).json({
       message: error.message,
     });

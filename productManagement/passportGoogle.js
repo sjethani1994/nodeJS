@@ -12,24 +12,6 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     function (accessToken, refreshToken, profile, done) {
-      // Step 3: Callback function for Google strategy
-      console.log(profile);
-
-      // Profile contains user information received from Google.
-      // You can create a user schema based on the fields of the profile.
-
-      // Example user schema:
-      // userschema: {
-      //   profilename,
-      //   email,
-      //   googleid: profile.id,
-      // }
-
-      // Check if the user exists by searching for the Google ID in your database
-      // If the user is new, create a new user document; otherwise, retrieve the existing user
-      // Example: UserModel.findOne({ googleid: profile.id });
-
-      // In this example, we pass the entire profile to the 'done' function.
       done(null, profile);
     }
   )
@@ -56,7 +38,6 @@ GoogleRoutes.get("/logout", (req, res, next) => {
   // Logout the user
   req.logout((err) => {
     if (err) {
-      console.log(err);
       return next(err);
     }
     // Redirect to the login page after successful logout

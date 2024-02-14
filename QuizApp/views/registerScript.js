@@ -36,8 +36,5 @@ async function register() {
         error.message || "An unexpected error occurred."
       );
     }
-  } else {
-    // Log a message if either email or password is missing
-    console.log("Please enter all fields.");
   }
 }

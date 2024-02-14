@@ -126,7 +126,6 @@ async function submitAnswer() {
       // Display the next question
       displayCurrentQuestion();
     } else {
-      console.log("Quiz completed!");
       updateResultContainerVisibility();
     }
   } else {

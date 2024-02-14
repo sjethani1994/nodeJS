@@ -13,7 +13,7 @@ async function login(event) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       // Check if the response is OK (status code 200)
@@ -25,15 +25,11 @@ async function login(event) {
       const data = await response.json();
 
       // Handle the logged-in user data as needed
-      sessionStorage.setItem('token', data.token);
-      window.location.href = 'index.html';
+      sessionStorage.setItem("token", data.token);
+      window.location.href = "index.html";
     } catch (error) {
       // Handle errors during the fetch or if the server responds with a non-ok status
       console.error("Error Logging In:", error);
     }
-  } else {
-    // Log a message if either email or password is missing
-    console.log("Please enter both email and password.");
   }
 }
-

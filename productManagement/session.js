@@ -48,7 +48,6 @@ app.get("/info", isAuthenticated, (req, res) => {
 
 app.post("/login", (req, res) => {
   //authentication logic
-  console.log(req.body);
   //the moment user entered password matches the db password
   req.session.userid = "1234";
 

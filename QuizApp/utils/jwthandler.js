@@ -18,7 +18,6 @@ async function jwtHandler(req,res,next){
         req.user = user;
         next();
     } catch (error) {
-        console.log(error.message);
         return res.status(404).json({
             message:"Something went wrong with tokens"
         })

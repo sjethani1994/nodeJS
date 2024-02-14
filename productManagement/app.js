@@ -267,6 +267,4 @@ app.put("/updateProduct", (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-  console.log("Server Started");
-});
+app.listen(port);

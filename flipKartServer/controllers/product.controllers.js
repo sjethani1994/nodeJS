@@ -15,7 +15,6 @@ const getAllProducts = async (req, res) => {
     });
   } catch (error) {
     // Handle errors and respond with an error message
-    console.log(error);
     res.status(404).json({
       message: error.message,
     });
@@ -38,7 +37,6 @@ const getProductById = async (req, res) => {
     });
   } catch (error) {
     // Handle errors and respond with an error message
-    console.log(error.message);
     res.status(404).json({
       message: error.message,
     });
@@ -69,8 +67,6 @@ const addProduct = async (req, res) => {
       insertedProduct,
     });
   } catch (error) {
-    // Handle errors and respond with an error message
-    console.log(error.message);
     res.status(404).json({
       message: error.message,
     });
@@ -99,8 +95,6 @@ const updateProduct = async (req, res) => {
       updatedProduct,
     });
   } catch (error) {
-    // Handle errors and respond with an error message
-    console.log(error.message);
     res.status(404).json({
       message: error.message,
     });
@@ -131,8 +125,6 @@ const filterProduct = async (req, res) => {
       filteredProducts,
     });
   } catch (error) {
-    // Handle errors and respond with an error message
-    console.log(error.message);
     res.status(404).json({
       message: error.message,
     });
@@ -159,8 +151,6 @@ const searchProduct = async (req, res) => {
       filteredProducts,
     });
   } catch (error) {
-    // Handle errors and respond with an error message
-    console.log(error.message);
     res.status(404).json({
       message: error.message,
     });

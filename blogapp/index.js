@@ -10,12 +10,11 @@ app.use(express.json());
 
 // Middleware to enable CORS
 app.use(cors());
-
+app.use("/uploads", express.static("uploads"));
 // Function to connect to MongoDB database
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.Mongo_Url);
-    console.log("Connected to the database");
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
   }
