@@ -15,6 +15,7 @@ app.use("/uploads", express.static("uploads"));
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.Mongo_Url);
+    console.log("Connencted to Database.");
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
   }
