@@ -8,7 +8,7 @@ const server = createServer(app);
 const Port = 5000;
 const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
-const secretKeyJWT = "asdasdsadasdasdasdsa";
+const startProductSocket = require("./utils/productSocket");
 const port = 5000;
 
 const io = new SocketIOServer(server, {
@@ -36,7 +36,8 @@ const connectDb = async () => {
     console.log("Connected to the database");
 
     // Start listening for changes in the database
-    // startDatabaseListener(server);
+    // Start listening for changes in the database
+    startProductSocket(io); // Call the function to start the change stream
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
   }
@@ -64,11 +65,6 @@ app.locals.io = io;
 
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
-
-  socket.on("message", (message) => {
-    console.log("message", message, socket.id);
-  });
-
   socket.on("disconnect", () => {
     console.log("User Disconnected", socket.id);
   });

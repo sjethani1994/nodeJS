@@ -1,6 +1,4 @@
 const ProductModel = require("../models/product.model");
-// Periodically send product bidder data through socket
-const startProductSocket = require("../utils/productSocket");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -167,10 +165,6 @@ const placeBid = async (req, res) => {
     // Update the product with the new bid amount
     product.currentBid = amount;
     await product.save();
-
-    const io = req.app.locals.io;
-    // Call the socket function with the io object and the product object
-    await startProductSocket(io, product);
 
     res.status(200).json({
       message: "Bid placed successfully",
