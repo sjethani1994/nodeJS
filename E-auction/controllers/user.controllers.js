@@ -79,7 +79,7 @@ const LoginUser = async (req, res) => {
   if (isMatchedPassword) {
     const token = jwt.sign(
       {
-        data: user._id,
+        data: { userId: user._id, username: user.username },
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: "1h" }
@@ -204,7 +204,10 @@ const newsLetter = async (req, res) => {
       email,
     });
 
-    res.json({ message: "Successfully subscribed to newsletter", newSubscriber });
+    res.json({
+      message: "Successfully subscribed to newsletter",
+      newSubscriber,
+    });
   } catch (error) {
     console.error("Error subscribing to newsletter:", error);
     res.status(500).json({ error: "Internal server error" });

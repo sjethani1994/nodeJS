@@ -1,12 +1,23 @@
 const express = require("express");
+const { Server: SocketIOServer } = require("socket.io");
+const { createServer } = require("node:http");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
+const server = createServer(app);
 const Port = 5000;
 const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
-// const startDatabaseListener = require("./utils/databaseListener");
+const secretKeyJWT = "asdasdsadasdasdasdsa";
+const port = 5000;
 
+const io = new SocketIOServer(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 // Middleware to parse JSON requests
 app.use(express.json());
 
@@ -48,7 +59,22 @@ app.use("*", (req, res, next) => {
 
 app.use(errorHandler);
 
+// Assign io to app.locals to make it accessible globally
+app.locals.io = io;
+
+io.on("connection", (socket) => {
+  console.log("User Connected", socket.id);
+
+  socket.on("message", (message) => {
+    console.log("message", message, socket.id);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
+  });
+});
+
 // Start the server and listen on the specified port
-const server = app.listen(Port, () => {
-  console.log(`Server is running on Port ${Port}`);
+server.listen(port, () => {
+  console.log("server running at http://localhost:5000");
 });

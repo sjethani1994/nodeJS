@@ -5,6 +5,7 @@ const {
   updateProduct,
   deleteProduct,
   getProductById,
+  placeBid,
 } = require("../controllers/product.controllers");
 const jwtHandler = require("../utils/jwthandler");
 
@@ -23,9 +24,11 @@ productRoute.post("/addProduct", jwtHandler, addProduct);
 // Route to update an existing product
 productRoute.post("/updateProduct", jwtHandler, updateProduct);
 
-
 // Route to delete a specific product by its productId
 productRoute.post("/deleteproduct/:productId", jwtHandler, deleteProduct);
+
+// Route to place a bid for a particular product by it's productId
+productRoute.post("/placeBid/:productId", jwtHandler, placeBid);
 
 // Exporting the productRoute for use in the main app
 module.exports = productRoute;

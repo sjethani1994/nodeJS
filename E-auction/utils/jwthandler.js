@@ -16,7 +16,8 @@ async function jwtHandler(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     // Set the decoded user ID in the request object
-    req.userId = decoded.data;
+    req.userId = decoded.data.userId;
+    req.username = decoded.data.username;
 
     // Call the next middleware or route handler
     next();

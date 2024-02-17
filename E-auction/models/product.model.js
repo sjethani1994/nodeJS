@@ -33,6 +33,21 @@ const ProductSchema = new Schema(
       type: Date,
       required: true,
     },
+    bidders: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "users", // Assuming you have a User model
+        },
+        username: {
+          type: String
+        },
+        bidAmount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   {
     // Enable timestamps to track creation and update times
