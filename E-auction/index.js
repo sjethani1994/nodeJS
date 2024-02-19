@@ -10,7 +10,7 @@ const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
 const startProductSocket = require("./utils/productSocket");
 const port = 5000;
-
+app.use("/uploads", express.static("uploads"));
 const io = new SocketIOServer(server, {
   cors: {
     origin: "http://localhost:3000",

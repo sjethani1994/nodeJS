@@ -1,32 +1,45 @@
 const ProductModel = require("../models/product.model");
 
 module.exports = async (io) => {
-  try {
-    // Create a change stream for the products collection
-    const changeStream = ProductModel.watch();
+  let changeStream; // Define changeStream outside the try block
 
-    // Listen for change events
-    changeStream.on("change", async (change) => {
-      console.log("Change detected:", change);
+  const setupChangeStream = () => {
+    try {
+      // Create a change stream for the products collection
+      changeStream = ProductModel.watch();
 
-      // Get the updated product from the database
-      const product = await ProductModel.findById(change.documentKey._id);
+      // Listen for change events
+      changeStream.on("change", async (change) => {
+        console.log("Change detected:", change);
 
-      // Prepare data to send
-      const productData = {
-        productId: product._id,
-        bidders: product.bidders.map((bidder) => ({
-          userId: bidder._id,
-          username: bidder.username,
-        })),
-      };
+        // Get the updated product from the database
+        const product = await ProductModel.findById(change.documentKey._id);
 
-      // Emit data through socket
-      io.emit("productBidders", productData);
+        console.log("product:", product);
+        // Emit data through socket
+        io.emit("productBidders", product);
+      });
+
+      console.log("Listening for changes in products collection...");
+    } catch (error) {
+      console.error("Error setting up change stream:", error);
+    }
+  };
+
+  // Initial setup
+  setupChangeStream();
+
+  // Reconnection handler
+  io.on("connection", (socket) => {
+    console.log("User connected");
+
+    // Re-setup change stream if disconnected
+    if (!changeStream) {
+      setupChangeStream();
+    }
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
     });
-
-    console.log("Listening for changes in products collection...");
-  } catch (error) {
-    console.error("Error setting up change stream:", error);
-  }
+  });
 };

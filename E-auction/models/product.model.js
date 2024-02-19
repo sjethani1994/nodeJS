@@ -23,11 +23,13 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: String,
-    },
+    avatar: { type: String },
     rating: {
       type: Number,
+    },
+    startDate: {
+      type: Date,
+      required: true,
     },
     endDate: {
       type: Date,
@@ -40,7 +42,7 @@ const ProductSchema = new Schema(
           ref: "users", // Assuming you have a User model
         },
         username: {
-          type: String
+          type: String,
         },
         bidAmount: {
           type: Number,

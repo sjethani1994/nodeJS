@@ -8,7 +8,7 @@ const {
   placeBid,
 } = require("../controllers/product.controllers");
 const jwtHandler = require("../utils/jwthandler");
-
+const multerMiddleware = require("../utils/multerMiddleware");
 // Creating a custom route for product-related endpoints
 const productRoute = express.Router();
 
@@ -19,10 +19,15 @@ productRoute.get("/getAllProducts", jwtHandler, getAllProducts);
 productRoute.get("/getProductById/:id", jwtHandler, getProductById);
 
 // Route to add a new product
-productRoute.post("/addProduct", jwtHandler, addProduct);
+productRoute.post("/addProduct", jwtHandler, multerMiddleware, addProduct);
 
 // Route to update an existing product
-productRoute.post("/updateProduct", jwtHandler, updateProduct);
+productRoute.post(
+  "/updateProduct",
+  jwtHandler,
+  multerMiddleware,
+  updateProduct
+);
 
 // Route to delete a specific product by its productId
 productRoute.post("/deleteproduct/:productId", jwtHandler, deleteProduct);
