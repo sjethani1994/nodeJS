@@ -18,8 +18,6 @@ const io = new SocketIOServer(server, {
     credentials: true,
   },
 });
-// Middleware to parse JSON requests
-app.use(express.json());
 
 // Middleware to enable CORS
 app.use(
@@ -29,13 +27,15 @@ app.use(
   })
 );
 
+// Middleware to parse JSON requests
+app.use(express.json());
+
 // Function to connect to MongoDB database
 const connectDb = async () => {
   try {
     await mongoose.connect(process.env.Mongo_Url);
     console.log("Connected to the database");
 
-    // Start listening for changes in the database
     // Start listening for changes in the database
     startProductSocket(io); // Call the function to start the change stream
   } catch (error) {

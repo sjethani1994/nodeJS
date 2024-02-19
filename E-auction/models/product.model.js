@@ -19,14 +19,7 @@ const ProductSchema = new Schema(
       type: String,
       required: true,
     },
-    subCategory: {
-      type: String,
-      required: true,
-    },
     avatar: { type: String },
-    rating: {
-      type: Number,
-    },
     startDate: {
       type: Date,
       required: true,

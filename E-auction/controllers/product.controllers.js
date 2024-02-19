@@ -43,7 +43,6 @@ const addProduct = async (req, res) => {
       title,
       description,
       category,
-      subCategory,
       seller,
       price,
       startDate,
@@ -54,7 +53,6 @@ const addProduct = async (req, res) => {
       title,
       description,
       category,
-      subCategory,
       avatar: imagePath,
       seller,
       price,
@@ -76,7 +74,7 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, category, subCategory, price } = req.body;
+    const { title, description, category, price } = req.body;
     const imagePath = req.file.path; // Getting the path of the uploaded image
     const updatedProduct = await ProductModel.findByIdAndUpdate(
       id,
@@ -84,7 +82,6 @@ const updateProduct = async (req, res) => {
         title,
         description,
         category,
-        subCategory,
         avatar: imagePath,
         price,
       },
