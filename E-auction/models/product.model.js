@@ -28,6 +28,10 @@ const ProductSchema = new Schema(
       type: Date,
       required: true,
     },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
     bidders: [
       {
         user: {

@@ -5,11 +5,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 const server = createServer(app);
-const Port = 5000;
 const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
 const startProductSocket = require("./utils/productSocket");
 const port = 5000;
+const cron = require("cron");
+const updateExpiredProducts = require("./utils/updateExpiredProducts");
 app.use("/uploads", express.static("uploads"));
 const io = new SocketIOServer(server, {
   cors: {
@@ -69,6 +70,20 @@ io.on("connection", (socket) => {
     console.log("User Disconnected", socket.id);
   });
 });
+
+// Define a cron job to run every minute
+const job = new cron.CronJob(
+  "0 * * * * *",
+  async () => {
+    // Call the function to update expired products
+    await updateExpiredProducts();
+  },
+  null,
+  true
+);
+
+// Start the cron job
+job.start();
 
 // Start the server and listen on the specified port
 server.listen(port, () => {

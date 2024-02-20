@@ -2,7 +2,7 @@ const ProductModel = require("../models/product.model");
 
 const getAllProducts = async (req, res) => {
   try {
-    const allProducts = await ProductModel.find();
+    const allProducts = await ProductModel.find({ isActive: true });
     res.status(200).json({
       message: "All products retrieved successfully",
       products: allProducts,
@@ -19,7 +19,7 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await ProductModel.findById(id);
+    const product = await ProductModel.findById({ _id: id, isActive: true });
     if (!product) {
       return res.status(404).json({
         message: `Product with id ${id} not found`,
