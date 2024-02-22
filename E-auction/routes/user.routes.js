@@ -2,11 +2,12 @@ const express = require("express");
 const {
   RegisterUser,
   LoginUser,
-  updateUser,
+  updateProfile,
   deleteUser,
   newsLetter,
 } = require("../controllers/user.controllers");
 const jwtHandler = require("../utils/jwthandler");
+const multerMiddleware = require("../utils/multerMiddleware");
 // Creating a custom route using express.Router()
 const UserRoute = express.Router();
 
@@ -17,7 +18,12 @@ UserRoute.post("/register", RegisterUser);
 UserRoute.post("/login", LoginUser);
 
 // Route for updating user information
-UserRoute.post("/updateUser/:userId", jwtHandler, updateUser);
+UserRoute.post(
+  "/updateProfile/:userId",
+  jwtHandler,
+  multerMiddleware,
+  updateProfile
+);
 
 // Route for deleting a user account
 UserRoute.post("/deleteUser/:userId", jwtHandler, deleteUser);

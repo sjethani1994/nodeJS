@@ -88,6 +88,7 @@ const LoginUser = async (req, res) => {
     return res.status(200).json({
       message: `User is logged in`,
       token,
+      user,
     });
   }
 
@@ -97,13 +98,28 @@ const LoginUser = async (req, res) => {
   });
 };
 
-// Function to update user information
-const updateUser = async (req, res) => {
+const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { username } = req.body;
+    const {
+      firstName,
+      lastName,
+      username,
+      email,
+      address,
+      company,
+      bio,
+      birthDate,
+      country,
+      phone,
+      website,
+      google,
+      instagram,
+      linkedIn,
+    } = req.body;
+    const imagePath = req.file.path; // Assuming req.file is available and contains the file path
 
-    // Check if a valid username is provided for the update
+    // Validate if username is provided
     if (!username) {
       return res.status(400).json({
         message: "Please provide a valid username for the update.",
@@ -113,8 +129,24 @@ const updateUser = async (req, res) => {
     // Update the user information
     const updatedDoc = await UserModel.findByIdAndUpdate(
       userId,
-      { username: username },
-      { new: true }
+      {
+        firstName,
+        lastName,
+        username,
+        email,
+        address,
+        company,
+        bio,
+        birthDate,
+        country,
+        phone,
+        website,
+        google,
+        instagram,
+        linkedIn,
+        avatar: imagePath, // Assuming imagePath contains the path of the uploaded image
+      },
+      { new: true } // Return the updated document
     );
 
     // Check if the user with the provided userId is found
@@ -223,7 +255,7 @@ function isValidEmail(email) {
 module.exports = {
   LoginUser,
   RegisterUser,
-  updateUser,
+  updateProfile,
   deleteUser,
   newsLetter,
 };
