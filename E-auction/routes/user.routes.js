@@ -5,6 +5,7 @@ const {
   updateProfile,
   deleteUser,
   newsLetter,
+  getProfileDetails,
 } = require("../controllers/user.controllers");
 const jwtHandler = require("../utils/jwthandler");
 const multerMiddleware = require("../utils/multerMiddleware");
@@ -24,6 +25,8 @@ UserRoute.post(
   multerMiddleware,
   updateProfile
 );
+
+UserRoute.get("/getProfile/:userId", jwtHandler, getProfileDetails);
 
 // Route for deleting a user account
 UserRoute.post("/deleteUser/:userId", jwtHandler, deleteUser);

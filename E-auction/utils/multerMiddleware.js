@@ -21,7 +21,7 @@ const multerMiddleware = function (req, res, next) {
       // An unknown error occurred when uploading.
       return next(err);
     }
-    req.path = req.file.path;
+    req.path = req?.file?.path;
 
     next();
   });

@@ -98,6 +98,39 @@ const LoginUser = async (req, res) => {
   });
 };
 
+const getProfileDetails = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserModel.findById(userId); // Ensure await keyword to properly retrieve user
+
+    if (!user) {
+      return res.status(404).json({
+        // Change status code to 404 for resource not found
+        message: `User with ID ${userId} is not found.`,
+      });
+    }
+    return res.status(200).json({
+      message: `User Data`,
+      user,
+    });
+  } catch (error) {
+    console.error("Error while fetching user profile:", error);
+
+    // Check for specific error types and provide appropriate error messages
+    if (error.name === "CastError") {
+      // Check for CastError to handle invalid ObjectId format
+      return res.status(400).json({
+        message: `Invalid user ID format: ${userId}`,
+      });
+    }
+
+    // Generic server error
+    return res.status(500).json({
+      message: "Internal server error while fetching user profile.",
+    });
+  }
+};
+
 const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -116,8 +149,9 @@ const updateProfile = async (req, res) => {
       google,
       instagram,
       linkedIn,
+      avatar,
     } = req.body;
-    const imagePath = req.file.path; // Assuming req.file is available and contains the file path
+    const imagePath = req?.file?.path || avatar; // Assuming req.file is available and contains the file path
 
     // Validate if username is provided
     if (!username) {
@@ -255,6 +289,7 @@ function isValidEmail(email) {
 module.exports = {
   LoginUser,
   RegisterUser,
+  getProfileDetails,
   updateProfile,
   deleteUser,
   newsLetter,
