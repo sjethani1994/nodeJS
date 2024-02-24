@@ -9,8 +9,6 @@ const errorHandler = require("./utils/errorHandler");
 require("dotenv").config();
 const startProductSocket = require("./utils/productSocket");
 const port = 5000;
-const cron = require("cron");
-const updateExpiredProducts = require("./utils/updateExpiredProducts");
 app.use("/uploads", express.static("uploads"));
 const io = new SocketIOServer(server, {
   cors: {
@@ -38,7 +36,7 @@ const connectDb = async () => {
     console.log("Connected to the database");
 
     // Start listening for changes in the database
-    startProductSocket(io); // Call the function to start the change stream
+    startProductSocket(io); // Start the socket connection once
   } catch (error) {
     console.log("Error connecting to the database:", error.message);
   }
@@ -54,6 +52,7 @@ const productRoute = require("./routes/product.routes");
 app.use("/user", UserRoute);
 app.use("/product", productRoute);
 
+// Error handling middleware
 app.use("*", (req, res, next) => {
   const error = new Error("The route does not exist.");
   next(error);
@@ -61,9 +60,7 @@ app.use("*", (req, res, next) => {
 
 app.use(errorHandler);
 
-// Assign io to app.locals to make it accessible globally
-app.locals.io = io;
-
+// Socket connection handling
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
   socket.on("disconnect", () => {
@@ -71,21 +68,12 @@ io.on("connection", (socket) => {
   });
 });
 
-// Define a cron job to run every minute
-const job = new cron.CronJob(
-  "0 * * * * *",
-  async () => {
-    // Call the function to update expired products
-    await updateExpiredProducts();
-  },
-  null,
-  true
-);
-
-// Start the cron job
-job.start();
-
 // Start the server and listen on the specified port
 server.listen(port, () => {
-  console.log("server running at http://localhost:5000");
+  console.log("Server running at http://localhost:5000");
 });
+
+// Call the socket setup function every minute
+setInterval(() => {
+  startProductSocket(io);
+}, 60000); // 60000 milliseconds = 1 minute

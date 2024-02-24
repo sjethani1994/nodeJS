@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <style>
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <ul id="messages"></ul>
+    <form action="" id="form" autocomplete="off">
+      <input id="msg" />
+      <button>Send</button>
+    </form>
+
+    <script>
+      const socket = io();
+
+      // Event handler for receiving previous messages
+      socket.on("previous messages", (messages) => {
+        const messagesList = document.getElementById("messages");
+        messages.forEach((msg) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `${msg.user}: ${msg.message}`;
+          messagesList.appendChild(listItem);
+        });
+      });
+
+      document.getElementById("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const messageInput = document.getElementById("msg");
+        const user = prompt("Enter your username"); // Prompt user for a username
+        const message = messageInput.value;
+
+        // Emit a chat message to the server
+        socket.emit("chat message", { user, message });
+
+        messageInput.value = "";
+        return false;
+      });
+
+      // Event handler for receiving new chat messages
+      socket.on("chat message", (msg) => {
+        const messagesList = document.getElementById("messages");
+        const listItem = document.createElement("li");
+        listItem.textContent = `${msg.user}: ${msg.message}`;
+        messagesList.appendChild(listItem);
+      });
+    </script>
+  </body>
+</html>

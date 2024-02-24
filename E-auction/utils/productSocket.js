@@ -1,26 +1,49 @@
 const ProductModel = require("../models/product.model");
 
 module.exports = async (io) => {
-  let changeStream; // Define changeStream outside the try block
+  let changeStream;
 
   const setupChangeStream = () => {
     try {
-      // Create a change stream for the products collection
-      changeStream = ProductModel.watch();
+      // Only set up the change stream if it's not already set up
+      if (!changeStream) {
+        changeStream = ProductModel.watch();
 
-      // Listen for change events
-      changeStream.on("change", async (change) => {
-        console.log("Change detected:", change);
+        changeStream.on("change", async (change) => {
+          console.log("Change detected:", change);
 
-        // Get the updated product from the database
-        const product = await ProductModel.findById(change.documentKey._id);
+          try {
+            // Get the updated product from the database
+            const product = await ProductModel.findById(change.documentKey._id);
 
-        console.log("product:", product);
-        // Emit data through socket
-        io.emit("productBidders", product);
-      });
+            console.log("product:", product);
 
-      console.log("Listening for changes in products collection...");
+            // Update isActive flag based on current date
+            const currentDate = new Date();
+            if (
+              currentDate >= new Date(product.startDate) &&
+              currentDate <= new Date(product.endDate)
+            ) {
+              product.isActive = true;
+            } else {
+              product.isActive = false;
+            }
+
+            // Save the updated product
+            await product.save();
+
+            // Emit data through socket
+            io.emit("productBidders", product);
+          } catch (error) {
+            console.error(
+              "Error updating product or emitting socket data:",
+              error
+            );
+          }
+        });
+
+        console.log("Listening for changes in products collection...");
+      }
     } catch (error) {
       console.error("Error setting up change stream:", error);
     }
