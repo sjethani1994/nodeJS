@@ -16,8 +16,6 @@ module.exports = async (io) => {
             // Get the updated product from the database
             const product = await ProductModel.findById(change.documentKey._id);
 
-            console.log("product:", product);
-
             // Update isActive flag based on current date
             const currentDate = new Date();
             if (
@@ -46,6 +44,8 @@ module.exports = async (io) => {
       }
     } catch (error) {
       console.error("Error setting up change stream:", error);
+      // Retry setup after a delay if an error occurs
+      setTimeout(setupChangeStream, 5000); // Retry after 5 seconds
     }
   };
 

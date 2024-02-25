@@ -3,11 +3,16 @@ const Product = require("../models/product.model");
 async function updateExpiredProducts() {
   try {
     const currentDate = new Date();
+    const twentyFourHoursLater = new Date(currentDate);
+    twentyFourHoursLater.setDate(currentDate.getDate() + 1);
 
-    const products = await Product.find({});
+    // Query for products expiring within the next 24 hours
+    const products = await Product.find({
+      endDate: { $gte: currentDate, $lt: twentyFourHoursLater },
+    });
 
     for (const product of products) {
-      // Check if the current date is within the range of startDate and endDate
+      // Update isActive flag based on current date
       if (
         currentDate >= new Date(product.startDate) &&
         currentDate <= new Date(product.endDate)
@@ -17,11 +22,12 @@ async function updateExpiredProducts() {
         product.isActive = false;
       }
 
+      // Save the updated product
       await product.save();
     }
 
     console.log(
-      "Updated isActive flag for products based on startDate and endDate."
+      "Updated isActive flag for products expiring within the next 24 hours."
     );
   } catch (error) {
     console.error("Error updating isActive flag:", error);
