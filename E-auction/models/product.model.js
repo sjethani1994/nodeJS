@@ -32,11 +32,14 @@ const ProductSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    highestBidder: {
+      type: String,
+    },
     bidders: [
       {
         user: {
           type: Schema.Types.ObjectId,
-          ref: "users", // Assuming you have a User model
+          ref: "users",
         },
         username: {
           type: String,
