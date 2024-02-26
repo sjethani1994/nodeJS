@@ -2,14 +2,13 @@ const Product = require("../models/product.model");
 
 async function updateExpiredProducts() {
   try {
-    // Get the current date and 24 hours later
+    // Get the current date
     const currentDate = new Date();
-    const twentyFourHoursLater = new Date(currentDate);
-    twentyFourHoursLater.setDate(currentDate.getDate() + 1);
 
     // Query for products expiring within the next 24 hours
     const products = await Product.find({
-      endDate: { $gte: currentDate, $lt: twentyFourHoursLater },
+      startDate: { $lte: currentDate }, // Products that have already started
+      endDate: { $gte: currentDate }, // Products that have not yet ended
     });
 
     for (const product of products) {
@@ -26,7 +25,7 @@ async function updateExpiredProducts() {
           // Sort bidders in descending order based on bid amount
           product.bidders.sort((a, b) => b.bidAmount - a.bidAmount);
           // Update the product with the highest bidder's name
-          product.highestBidder = product.bidders[0].username;
+          product.highestBidder = product.bidders[0].user;
         } else {
           // If no bidders, set highestBidder to null or any appropriate default value
           product.highestBidder = null;
@@ -37,7 +36,7 @@ async function updateExpiredProducts() {
     }
 
     console.log(
-      "Updated isActive flag for products expiring within the next 24 hours."
+      "Updated isActive flag for products expiring within the start and end date range."
     );
   } catch (error) {
     console.error("Error updating isActive flag:", error);

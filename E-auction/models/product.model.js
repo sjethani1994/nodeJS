@@ -34,6 +34,7 @@ const ProductSchema = new Schema(
     },
     highestBidder: {
       type: String,
+      default: null,
     },
     bidders: [
       {

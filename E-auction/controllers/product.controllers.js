@@ -39,15 +39,8 @@ const getProductById = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      category,
-      seller,
-      price,
-      startDate,
-      endDate,
-    } = req.body;
+    const { title, description, category, seller, price, startDate, endDate } =
+      req.body;
     const imagePath = req.file.path; // Getting the path of the uploaded image
     const newProduct = await ProductModel.create({
       title,
@@ -177,6 +170,31 @@ const placeBid = async (req, res) => {
   }
 };
 
+const getUserHighestBidCount = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+
+    const productCount = await ProductModel.countDocuments({
+      highestBidder: userId,
+      highestBidder: { $ne: null }, // Make sure highestBidder is not null
+    });
+
+    res.status(200).json({
+      message: "Bidding Count",
+      productCount: productCount,
+    });
+  } catch (error) {
+    console.error("Error placing bid:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
@@ -184,4 +202,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   placeBid,
+  getUserHighestBidCount,
 };
