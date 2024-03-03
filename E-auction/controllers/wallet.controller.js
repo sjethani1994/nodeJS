@@ -1,5 +1,4 @@
-const UserModel = require("../models/userSchema.model");
-const mongoose = require("mongoose");
+const ProductModel = require("../models/product.model");
 const stripe = require("stripe")(
   "sk_test_51Oool4SIiKMrNAexO7BpxRwBUSGcvMc0IBTtyb2XYzumcbDaCi2oMj7VK9nxj52guTmTsssJAFkGoRKaWw8YfYO400Zwq9xQ5Y"
 );
@@ -12,7 +11,7 @@ const placeOrderSession = async (req, res) => {
       price_data: {
         currency: "inr",
         product_data: {
-          name: product[0].title, // Assuming product is an array with one item
+          name: product.length > 1 ? "Multile Products" : product[0].title, // Assuming product is an array with one item
         },
         unit_amount: unitAmount,
       },
@@ -58,16 +57,29 @@ const placeOrderSession = async (req, res) => {
   return res.json({ id: session.id });
 };
 
+// Function to place order and delete products from the database
 const placeOrder = async (req, res) => {
-  const { productId } = req.params;
+  const { productIds } = req.body;
   try {
-    const order = new Order({ productId });
-    await order.save();
-    res.json({ success: true, message: "Order placed successfully", order });
+    // Delete orders corresponding to each productId
+    const deletedOrders = await Promise.all(
+      productIds.map(async (productId) => {
+        const order = await ProductModel.findByIdAndDelete(productId);
+        return order;
+      })
+    );
+
+    // Respond with success message and deleted orders
+    res.json({
+      success: true,
+      message: "Orders placed successfully and database updated",
+      deletedOrders,
+    });
   } catch (error) {
+    // Handle errors if any
     res
       .status(500)
-      .json({ success: false, message: "Failed to place order", error });
+      .json({ success: false, message: "Failed to delete orders", error });
   }
 };
 
