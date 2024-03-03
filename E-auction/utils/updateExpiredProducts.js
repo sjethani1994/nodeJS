@@ -4,21 +4,16 @@ async function updateExpiredProducts() {
   try {
     // Get the current date
     const currentDate = new Date();
-
     // Query for products expiring within the next 24 hours
     const products = await Product.find({
       startDate: { $lte: currentDate }, // Products that have already started
-      endDate: { $gte: currentDate }, // Products that have not yet ended
     });
 
     for (const product of products) {
       // Update isActive flag based on current date
-      if (
-        currentDate >= new Date(product.startDate) &&
-        currentDate <= new Date(product.endDate)
-      ) {
+      if (currentDate <= new Date(product.endDate)) {
         product.isActive = true;
-      } else {
+      } else if (product.isActive !== false) {
         product.isActive = false;
         // Check if there are any bidders
         if (product.bidders.length > 0) {

@@ -6,7 +6,9 @@ const {
   deleteProduct,
   getProductById,
   placeBid,
-  getUserHighestBidCount
+  getUserHighestBidCount,
+  getCartProducts,
+  deleteProducts,
 } = require("../controllers/product.controllers");
 const jwtHandler = require("../utils/jwthandler");
 const multerMiddleware = require("../utils/multerMiddleware");
@@ -36,7 +38,15 @@ productRoute.post("/deleteproduct/:productId", jwtHandler, deleteProduct);
 // Route to place a bid for a particular product by it's productId
 productRoute.post("/placeBid/:productId", jwtHandler, placeBid);
 
-productRoute.post("/getUserHighestBidCount", jwtHandler, getUserHighestBidCount);
+productRoute.post(
+  "/getUserHighestBidCount",
+  jwtHandler,
+  getUserHighestBidCount
+);
+
+productRoute.get("/getCartProducts/:userId", jwtHandler, getCartProducts);
+
+productRoute.post("/deleteProducts", jwtHandler, deleteProducts);
 
 // Exporting the productRoute for use in the main app
 module.exports = productRoute;

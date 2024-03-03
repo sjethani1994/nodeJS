@@ -195,6 +195,59 @@ const getUserHighestBidCount = async (req, res) => {
   }
 };
 
+const getCartProducts = async (req, res) => {
+  try {
+    if (!req.params.userId) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+
+    const products = await ProductModel.find({
+      highestBidder: req.params.userId,
+      highestBidder: { $ne: null },
+    });
+
+    res.status(200).json({
+      message: "Cart Products.",
+      products: products,
+    });
+  } catch (error) {
+    console.error("Error placing bid:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const deleteProducts = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    if (!productIds || !Array.isArray(productIds)) {
+      return res.status(400).json({
+        message: "Invalid input. Please provide an array of product IDs.",
+      });
+    }
+
+    const deletedProducts = await ProductModel.deleteMany({
+      _id: { $in: productIds },
+    });
+    if (deletedProducts.deletedCount === 0) {
+      return res.status(404).json({
+        message: "No products found with the provided IDs.",
+      });
+    }
+
+    res.status(200).json({
+      message: "Products deleted successfully",
+      deletedProducts: deletedProducts,
+    });
+  } catch (error) {
+    console.error("Error deleting products:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
@@ -203,4 +256,6 @@ module.exports = {
   deleteProduct,
   placeBid,
   getUserHighestBidCount,
+  getCartProducts,
+  deleteProducts,
 };

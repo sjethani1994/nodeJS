@@ -28,7 +28,7 @@ app.use(
   })
 );
 
-// Middleware to parse JSON requests
+// Middleware for parsing JSON bodies
 app.use(express.json());
 
 // Function to connect to MongoDB database
@@ -50,9 +50,11 @@ connectDb();
 // Importing route modules
 const UserRoute = require("./routes/user.routes");
 const productRoute = require("./routes/product.routes");
+const walletRoute = require("./routes/wallet.routes");
 // Set up routes for different endpoints
 app.use("/user", UserRoute);
 app.use("/product", productRoute);
+app.use("/wallet", walletRoute);
 
 app.use("*", (req, res, next) => {
   const error = new Error("The route does not exist.");
@@ -73,7 +75,7 @@ io.on("connection", (socket) => {
 
 // Define a cron job to run every minute
 const job = new cron.CronJob(
-  "0 0 0 * * *",
+  "0 * * * * *",
   async () => {
     // Call the function to update expired products
     await updateExpiredProducts();
